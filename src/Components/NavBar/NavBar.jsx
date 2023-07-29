@@ -3,7 +3,7 @@ import useStyles from './NavBar.style.js'
 import { AppBar, IconButton, Toolbar, useMediaQuery, Drawer, Button, Avatar } from '@mui/material';
 import { Brightness7, Brightness4, AccountCircle, Menu } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 // import { Sidebar } from '..'
 import { Search, Sidebar } from './../index.js'
 import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
@@ -20,8 +20,6 @@ export default function NavBar() {
     const colorMode = useContext(ColorModeContext);
     const dispatch = useDispatch();
     const { isAuthenticated, user } = useSelector(userSelector);
-
-    // console.log(user);
 
 
     const token = localStorage.getItem('request_token');
@@ -40,15 +38,8 @@ export default function NavBar() {
                     dispatch(setUser(userData));
                 }
             }
-
-            
-            // if(window.location.href.includes('approved')){
-            //     window.location.href = '/';
-            // }
         }
-
         logInUser();
-        
     }, [token]);
     
 
@@ -88,7 +79,7 @@ export default function NavBar() {
                                 style={{ width: 30, height: 30 }}
                                 alt='Profile'
                                 src={user?.avater?.tmdb?.avatar_path? 
-                                        `${process.env.REACT_APP_IMAGE_BASE_LINK}/${user?.avater?.tmdb?.avatar_path}` 
+                                        `https://www.themoviedb.org/t/p/w64_and_h64_face/${user?.avater?.tmdb?.avatar_path}` 
                                         :  avater}
                             />
                         </Button>

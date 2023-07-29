@@ -5,6 +5,16 @@ export default function Footer() {
     const classes = useStyles();
 
     return <>
-        <h1>Footer</h1>
+        <div className={classes.container}>
+            Developed By &nbsp; 
+            <a 
+                href="https://github.com/Dragon-H22" 
+                target='_blank' 
+                rel="noreferrer"
+                className={classes.link}
+            >
+                Dragon_H22
+            </a>
+        </div>
     </>
 }

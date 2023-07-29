@@ -22,7 +22,7 @@ import upcoming  from './upcoming.png';
 import war  from './war.png';
 import western  from './western.png';
 
-export default {
+const icons = {
     action,
     adventure,
     animation,
@@ -46,3 +46,5 @@ export default {
     war,
     western,
 };
+
+export default  icons;

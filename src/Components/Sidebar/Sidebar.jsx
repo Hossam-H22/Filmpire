@@ -1,18 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import useStyles from './Sidebar.style.js'
-import { Divider, List, ListItem, ListItemIcon, ListSubheader, Box, CircularProgress, ListItemText, Typography } from '@mui/material'
+import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText } from '@mui/material'
 import { useTheme } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import darkLogo from './../../assests/Dark_logo.png'
 import lightLogo from './../../assests/Light_logo.png'
 import { useGetGenresQuery } from '../../services/TMDB.js';
-import { Loader } from './../index.js'
+import { Footer, Loader } from './../index.js'
 import genreIcons from './../../assests/genres/index.js'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
-
-
-
 
 const categories = [
     { label: 'Popular', value: 'popular' },
@@ -26,9 +23,14 @@ export default function Sidebar({ setMobileOpen }) {
     const classes = useStyles();
     const theme = useTheme();
 
+    const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
     const { data, isFetching } = useGetGenresQuery();
-    const { genreIdOrCategoryName } = useSelector((state)=> state.curruntGenreOrCategory);
     const dispatch = useDispatch();
+
+
+    useEffect(()=>{
+        setMobileOpen(false);
+    }, [genreIdOrCategoryName]);
 
 
     return <>
@@ -70,6 +72,8 @@ export default function Sidebar({ setMobileOpen }) {
                 </Link>
             ))}
         </List>
+        <Divider />
+        <Footer />
 
     </>
 }

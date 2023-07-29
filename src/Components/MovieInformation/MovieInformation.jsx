@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useStyles from './MovieInformation.style.js'
-import { Modal, Typography, Button, ButtonGroup, Grid, Box, CircularProgres, useMediaQuery, Rating } from '@mui/material';
+import { Modal, Typography, Button, ButtonGroup, Grid, Box, Rating } from '@mui/material';
 import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,6 +29,25 @@ export default function MovieInformation() {
     const { data: watchlistMovies } = useGetListQuery({listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1});
     const { data: recommendations, isFetching: isRecommendationsFetching } = useGetRecommendationsQuery({list:'recommendations', movie_id:id});
 
+    function formatDate(inputDate) {
+        const months = [
+            "Jan", 
+            "Feb", 
+            "Mar", 
+            "Apr", 
+            "May", 
+            "Jun", 
+            "Jul", 
+            "Aug", 
+            "Sep", 
+            "Oct", 
+            "Nov", 
+            "Dec"
+        ];
+        const [year, month, day] = inputDate.split("-").map(Number);
+        const formattedDate = `${months[month - 1]} ${day} ${year}`;
+        return formattedDate;
+    }
 
     useEffect(()=>{
         setIsMovieFavorited(!!favoriteMovies?.results?.find((movie)=> movie?.id===data?.id ));
@@ -57,7 +76,7 @@ export default function MovieInformation() {
         setIsMovieWatchlisted((prev)=> !prev);
     }
 
-
+    console.log(data);
 
     if (isFetching) return <Loader size='8rem' />
 
@@ -85,7 +104,7 @@ export default function MovieInformation() {
                         <Typography variant='subtitle1' gutterBottom style={{ marginLeft: '10px' }}>{data?.vote_average} / 10</Typography>
                     </Box>
                     <Typography variant='h6' align='center' gutterBottom>
-                        {data?.runtime}min {data?.spoken_languages?.length > 0 ? ` / ${data?.spoken_languages[0]?.name}` : ''}
+                        {data?.runtime}min / {formatDate(data?.release_date)} {data?.spoken_languages?.length > 0 ? ` / ${data?.spoken_languages[0]?.name}` : ''}
                     </Typography>
                 </Grid>
                 <Grid item className={classes.genresContainer}> {/* Genres Grid */}
@@ -144,6 +163,7 @@ export default function MovieInformation() {
                                     onClick={() => setOpen(true)} // open trailer videoa
                                     href=''
                                     endIcon={<Theaters />}
+                                    disabled={data?.videos?.results?.length > 0? false : true}
                                 > Trailer </Button>
                             </ButtonGroup>
                         </Grid>

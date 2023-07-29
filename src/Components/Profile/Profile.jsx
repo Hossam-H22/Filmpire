@@ -10,6 +10,7 @@ import { Loader, RatedCards } from './../index.js'
 
 export default function Profile() {
     const classes = useStyles();
+    
     const { user } = useSelector(userSelector);
     const sessionId = localStorage.getItem('session_id');
     const { data: favoriteMovies, 

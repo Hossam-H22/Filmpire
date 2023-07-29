@@ -1,6 +1,5 @@
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { List } from '@mui/material';
 
 const tmdbApiKey = process.env.REACT_APP_TMDB_KEY;
 

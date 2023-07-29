@@ -3,7 +3,7 @@ import useStyles from './Search.style.js'
 import { TextField, InputAdornment } from '@mui/material'
 import { Search as SearchIcon } from '@mui/icons-material'
 import { useDispatch } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { searchMovie } from '../../features/currentGenreOrCategory.js'
 
 
@@ -13,7 +13,6 @@ export default function Search() {
     const [query, setQuery] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
 
     function handleKeyPress(e) {
         if(e.key === 'Enter') {

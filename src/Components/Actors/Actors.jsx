@@ -16,8 +16,6 @@ export default function Actors() {
     const { data: movies } = useGetMoviesByActorIdQuery({id, page});
 
 
-    // console.log(movies);
-
 
     if (isFetching) return <Loader size='8rem' />
     if (error) return <NotFound path={`/`} message='Something has gone wrong - Go back' />
