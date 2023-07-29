@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import useStyles from './NotFound.style.js'
 import { Box, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import notFound_light_img from './../../assests/404 Error_page_not_found_light.svg'
-import notFound_dark_img from './../../assests/404 Error_page_not_found_dark.svg'
 import { useTheme } from '@mui/material/styles'
 import { ArrowBack } from '@mui/icons-material';
+import notFound_light_img from './../../assests/404_Error_page_not_found.svg'
+import notFound_dark_img from './../../assests/404_Error_page_not_found_dark.svg'
 
 export default function NotFound({ path, message }) {
     const classes = useStyles();
