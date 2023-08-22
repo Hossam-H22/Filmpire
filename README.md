@@ -1,4 +1,3 @@
-# Filmpire
 
 ![Filmpire-logo](https://github.com/Dragon-H22/Filmpire/assets/88390970/7465cf6c-0209-4947-ae6b-6449fa41def6)
 
