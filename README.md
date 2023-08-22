@@ -1,6 +1,6 @@
 # Filmpire
 
-![fresh cart-logo](https://github.com/Dragon-H22/Fresh-Cart/assets/88390970/fa13511e-04b7-43aa-a2af-51dff8ee991a)
+![Light_logo](https://github.com/Dragon-H22/Filmpire/assets/88390970/422d490f-a295-4446-b170-573aadcf2f39)
 
 
 ## Description
@@ -84,7 +84,7 @@ To get started with the Fresh Cart frontend project, follow these steps:
 
 
 ## Feedback
-I'm excited to hear your <u><a href="https://forms.gle/38PiwB5dUTHNTPAS6" target="_blank">feedback</a></u> and discuss potential collaborations in this ever-evolving field.
+I'm excited to hear your <u><a href="https://forms.gle/o82Qt7jX1iJkqmRr5" target="_blank">feedback</a></u> and discuss potential collaborations in this ever-evolving field.
 
 
 
@@ -94,18 +94,18 @@ I'm excited to hear your <u><a href="https://forms.gle/38PiwB5dUTHNTPAS6" target
 ## Sample Photos 
 
 #### Home Page (Light Mode)
-![register](https://github.com/Dragon-H22/Fresh-Cart/assets/88390970/ce139ac8-e452-4455-910f-0d9bd3ffa18b)
+![home - light](https://github.com/Dragon-H22/Filmpire/assets/88390970/55a571ea-de15-4a9d-b10b-dd46025bded8)
 
 #### Home Page (Dark Mode)
-![Home](https://github.com/Dragon-H22/Fresh-Cart/assets/88390970/0b85f904-8e98-4f99-87ac-b286781829a3)
+![home - dark](https://github.com/Dragon-H22/Filmpire/assets/88390970/e5c36b5d-a9e2-4189-8ce9-acbb4d9132f8)
 
 #### Film Page
-![products](https://github.com/Dragon-H22/Fresh-Cart/assets/88390970/57cc7063-035d-40d2-80b3-b7b9b00ee3c8)
+![film](https://github.com/Dragon-H22/Filmpire/assets/88390970/679702a2-0adb-4242-acf9-a45e12a10200)
 
 #### Actor Page
-![cart](https://github.com/Dragon-H22/Fresh-Cart/assets/88390970/34182369-151f-4011-9e44-2533372543bf)
+![actor](https://github.com/Dragon-H22/Filmpire/assets/88390970/fafc02d8-8d92-4f24-b0bf-fc87acd789dc)
 
 #### Profile Page
-![product](https://github.com/Dragon-H22/Fresh-Cart/assets/88390970/2e0c51dd-ee45-4022-acdf-fbf3c30e0024)
+![profile](https://github.com/Dragon-H22/Filmpire/assets/88390970/3510c0bb-c280-4d7f-82cd-c80ec81d0d72)
 
 
