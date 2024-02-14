@@ -8,7 +8,7 @@ export default function Footer() {
         <div className={classes.container}>
             Developed By &nbsp; 
             <a 
-                href="https://github.com/Dragon-H22" 
+                href="https://github.com/Hossam-H22" 
                 target='_blank' 
                 rel="noreferrer"
                 className={classes.link}
