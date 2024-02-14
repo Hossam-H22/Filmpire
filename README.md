@@ -3,8 +3,11 @@
 
 
 ## Description
-Welcome to Filmpire, your ultimate destination for exploring trending, popular, and a wide variety of movie categories and genres! This front-end project is designed to provide users with a seamless and engaging movie browsing experience. With Filmpire, you can discover detailed information about movies, including descriptions, trailers, ratings, and the cast and crew involved in creating cinematic masterpieces. Powered by ReactJS, Redux, Material UI, and Alan-AI, Filmpire is a comprehensive solution for movie enthusiasts to quench their thirst for entertainment.  *<a href="https://filmpire-dragon-h22.vercel.app" target="_blank"> Check it now⚡</a>*
+Welcome to Filmpire, your ultimate destination for exploring trending, popular, and a wide variety of movie categories and genres! This front-end project is designed to provide users with a seamless and engaging movie browsing experience. With Filmpire, you can discover detailed information about movies, including descriptions, trailers, ratings, and the cast and crew involved in creating cinematic masterpieces. Powered by ReactJS, Redux, Material UI, and Alan-AI, Filmpire is a comprehensive solution for movie enthusiasts to quench their thirst for entertainment.  
 
+<!--
+*<a href="https://filmpire-dragon-h22.vercel.app" target="_blank"> Check it now⚡</a>*
+-->
 
 
 <br>
