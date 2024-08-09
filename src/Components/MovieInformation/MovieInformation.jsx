@@ -18,6 +18,7 @@ export default function MovieInformation() {
     const dispatch = useDispatch();
     const { user } = useSelector(userSelector);
     const [open, setOpen] = useState(false);
+    const [isIframeLoading, setIsIframeLoading] = useState(false);
     const [playMovie, setPlayMovie] = useState(false);
     const [movieServer, setMovieServer] = useState(1);
     const [isMovieFavorited, setIsMovieFavorited] = useState(false);
@@ -177,7 +178,10 @@ export default function MovieInformation() {
                                     disabled={data?.videos?.results?.length > 0 ? false : true}
                                 > Trailer </Button>
                                 <Button
-                                    onClick={() => setPlayMovie(true)}
+                                    onClick={() => {
+                                        setPlayMovie(true);
+                                        setIsIframeLoading(true);
+                                    }}
                                     endIcon={<MovieIcon />}
                                 > Watch Now
                                 </Button>
@@ -227,11 +231,21 @@ export default function MovieInformation() {
                     <Grid item className={classes.buttonsContainer} style={{justifyContent: 'space-between'}}>
                         <ButtonGroup size='small' variant='contained' >
                             <Button
-                                onClick={() => setMovieServer(1)}
+                                onClick={() => {
+                                    if(movieServer==2){
+                                        setMovieServer(1); 
+                                        setIsIframeLoading(true);
+                                    }
+                                }}
                                 endIcon={<Dns />}
                             > Server 1 </Button>
                             <Button
-                                onClick={() => setMovieServer(2)}
+                                onClick={() =>  {
+                                    if(movieServer==1){
+                                        setMovieServer(2); 
+                                        setIsIframeLoading(true);
+                                    }
+                                }}
                                 endIcon={<Dns />}
                             > Server 2 </Button>
                         </ButtonGroup>
@@ -242,18 +256,25 @@ export default function MovieInformation() {
                             > Close </Button>
                         </ButtonGroup>
                     </Grid>
-                    <iframe
-                        autoPlay
-                        frameBorder='0'
-                        title='Movie'
-                        // src={ `https://www.2embed.cc/embed/${id}` or  `https://vidsrc.xyz/embed/movie/${id}` }
-                        src={movieServer === 1 ? `https://www.2embed.cc/embed/${id}` : `https://vidsrc.xyz/embed/movie/${id}`}
-                        allow='autoplay'
-                        allowFullScreen
-                        scrolling="no"
-                        width="100%"
-                        height="100%"
-                    />
+                    <div style={{width: '100%', height: '100%', position: 'relative'}}>
+                        {isIframeLoading && <div className={classes.movieLoader} >
+                            <Loader size='4rem' />
+                        </div> }
+                        <iframe
+                            autoPlay
+                            frameBorder='0'
+                            title='Movie'
+                            // src={ `https://www.2embed.cc/embed/${id}` or  `https://vidsrc.xyz/embed/movie/${id}` }
+                            src={movieServer === 1 ? `https://www.2embed.cc/embed/${id}` : `https://vidsrc.xyz/embed/movie/${id}`}
+                            allow='autoplay'
+                            allowFullScreen
+                            scrolling="no"
+                            width="100%"
+                            height="100%"
+                            onLoad={() => setIsIframeLoading(false)}
+                            style={{backgroundColor: "black"}}
+                        />
+                    </div>
                 </div>
             </Modal>}
 

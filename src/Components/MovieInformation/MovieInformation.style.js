@@ -108,4 +108,10 @@ export default makeStyles((theme) => ({
         right: '10px',
         top: '10px',
     },
+    movieLoader: {
+        position: 'absolute',
+        right: '0px',
+        left: '0px',
+        top: '40%',
+    },
 }));
