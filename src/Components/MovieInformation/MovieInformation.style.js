@@ -63,7 +63,16 @@ export default makeStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         width: '100%',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('xl')]: {
+            justifyContent: 'center',
+            flexDirection: 'column',
+        },
+        [theme.breakpoints.down('lg')]: {
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+        },
+        [theme.breakpoints.down('md')]: {
+            justifyContent: 'center',
             flexDirection: 'column',
         },
     },
@@ -71,6 +80,7 @@ export default makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'column',
     },
     videos: {
         width: '50%',
@@ -79,5 +89,15 @@ export default makeStyles((theme) => ({
             width: '90%',
             height: '50%',
         },
+    },
+    movieModelDiv: {
+        width: '60vw',
+        height: '60vh',
+        position: 'relative',
+    },
+    movieCloseBtn: {
+        position: 'absolute',
+        right: '10px',
+        top: '10px',
     },
 }));
