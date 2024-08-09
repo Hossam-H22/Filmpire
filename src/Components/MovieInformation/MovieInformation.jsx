@@ -164,7 +164,7 @@ export default function MovieInformation() {
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     href={`https://www.imdb.com/title/${data?.imdb_id}`}
-                                    endIcon={<MovieIcon />}
+                                    endIcon={<Language />}
                                 > IMDB </Button>
                             </ButtonGroup>
                         </Grid>
