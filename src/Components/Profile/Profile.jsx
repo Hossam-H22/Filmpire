@@ -6,6 +6,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { ExitToApp } from '@mui/icons-material';
 import { useGetListQuery } from '../../services/TMDB.js';
 import { Loader, RatedCards } from './../index.js'
+import { Helmet } from 'react-helmet';
 
 
 export default function Profile() {
@@ -38,6 +39,9 @@ export default function Profile() {
     if(isFetchingFavoriteMovies || isFetchingWatchlistMovies) return <Loader size='8rem' />
 
     return <>
+        <Helmet>
+            <title>Profile</title>
+        </Helmet>
         <Box>
             <Box display='flex' justifyContent='space-between' >
                 <Typography variant='h4' gutterBottom>My Profie</Typography>

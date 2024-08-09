@@ -6,6 +6,7 @@ import { Movies, MovieInformation, Actors, Profile, NavBar, NotFound } from './C
 import useStyles from './App.styles.js'
 import useAlan from './Components/Alan.jsx';
 import { useRef } from 'react';
+import { Helmet } from 'react-helmet';
 
 function App() {
 
@@ -14,6 +15,9 @@ function App() {
   useAlan();
 
   return <>
+    <Helmet>
+      <title>Filmpire</title>
+    </Helmet>
     <div className={classes.root} >
       <CssBaseline />
       <NavBar />

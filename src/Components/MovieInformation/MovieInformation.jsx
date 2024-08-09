@@ -4,6 +4,7 @@ import { Modal, Typography, Button, ButtonGroup, Grid, Box, Rating } from '@mui/
 import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack, Close, DesignServicesOutlined, Dns, } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Helmet } from "react-helmet";
 import axios from 'axios';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from '../../services/TMDB.js';
 import { Loader, MovieList, NotFound } from './../index.js'
@@ -86,6 +87,9 @@ export default function MovieInformation() {
     if (error) return <NotFound message='Something has gone wrong - Go back' path='/' />
 
     return <>
+        <Helmet>
+            <title>Film: {data?.title}</title>
+        </Helmet>
         <Grid container className={classes.containerSpaceAround} >
             <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
                 <img

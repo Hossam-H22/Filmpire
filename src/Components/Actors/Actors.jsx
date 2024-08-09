@@ -6,6 +6,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from '../../services/TMDB.js';
 import { Loader, MovieList, NotFound, Pagination } from './../index.js'
 import moviePoster from './../../assests/movie-poster.png'
+import { Helmet } from 'react-helmet';
 
 export default function Actors() {
     const classes = useStyles();
@@ -21,6 +22,9 @@ export default function Actors() {
     if (error) return <NotFound path={`/`} message='Something has gone wrong - Go back' />
 
     return <>
+        <Helmet>
+            <title>Actor: {data?.name}</title>
+        </Helmet>
         <Grid container spacing={3} >
             <Grid item lg={5} xl={4} >
                 <img

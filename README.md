@@ -58,7 +58,7 @@ https://api.themoviedb.org/
 
 
 <br>
-
+<!-- npm i --legacy-peer-deps -->
 
 ## Getting Started
 
