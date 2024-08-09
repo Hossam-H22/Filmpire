@@ -92,8 +92,16 @@ export default makeStyles((theme) => ({
     },
     movieModelDiv: {
         width: '60vw',
-        height: '60vh',
+        height: '60%',
         position: 'relative',
+        [theme.breakpoints.down('md')]: {
+            width: '90%',
+            height: '50%',
+        },
+        [theme.breakpoints.down('sm')]: {
+            width: '90%',
+            height: '40%',
+        },
     },
     movieCloseBtn: {
         position: 'absolute',

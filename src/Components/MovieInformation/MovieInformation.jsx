@@ -220,8 +220,8 @@ export default function MovieInformation() {
                 disableBackdropClick
             >
                 <div className={classes.movieModelDiv} >
-                    <Grid item className={classes.buttonsContainer}>
-                        <ButtonGroup size='medium' variant='contained' >
+                    <Grid item className={classes.buttonsContainer} style={{justifyContent: 'space-between'}}>
+                        <ButtonGroup size='small' variant='contained' >
                             <Button
                                 onClick={() => setMovieServer(1)}
                                 endIcon={<Dns />}
@@ -231,7 +231,7 @@ export default function MovieInformation() {
                                 endIcon={<Dns />}
                             > Server 2 </Button>
                         </ButtonGroup>
-                        <ButtonGroup size='medium' variant='contained' >
+                        <ButtonGroup size='small' variant='contained' >
                             <Button
                                 onClick={() => setPlayMovie(false)}
                                 endIcon={<Close />}
