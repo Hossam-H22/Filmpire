@@ -180,6 +180,7 @@ export default function MovieInformation() {
                                 <Button
                                     onClick={() => {
                                         setPlayMovie(true);
+                                        setMovieServer(1); 
                                         setIsIframeLoading(true);
                                     }}
                                     endIcon={<MovieIcon />}
