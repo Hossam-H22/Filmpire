@@ -266,7 +266,7 @@ export default function MovieInformation() {
                             frameBorder='0'
                             title='Movie'
                             // src={ `https://www.2embed.cc/embed/${id}` or  `https://vidsrc.xyz/embed/movie/${id}` }
-                            src={movieServer === 1 ? `https://www.2embed.cc/embed/${id}` : `https://vidsrc.xyz/embed/movie/${id}`}
+                            src={movieServer === 1 ? `https://vidsrc.xyz/embed/movie/${id}` : `https://www.2embed.cc/embed/${id}`}
                             allow='autoplay'
                             allowFullScreen
                             scrolling="no"
