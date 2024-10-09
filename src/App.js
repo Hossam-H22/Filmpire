@@ -12,7 +12,7 @@ function App() {
 
   const classes = useStyles();
   const alanBtnContainer = useRef();
-  useAlan();
+  // useAlan();
 
   return <>
     <Helmet>
