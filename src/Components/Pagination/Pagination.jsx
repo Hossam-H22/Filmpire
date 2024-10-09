@@ -23,7 +23,7 @@ export default function Pagination({curruntPage, setPage, totalPages}) {
     return <>
         <div className={classes.container}>
             <Button onClick={handlePrev} className={classes.button} variant='contained' color='primary' >Prev</Button>
-            <Typography variant='h4' className={classes.pageNumber}>{curruntPage}</Typography>
+            <Typography variant='h5' className={classes.pageNumber}>{curruntPage}</Typography>
             <Button onClick={handleNext} className={classes.button} variant='contained' color='primary' >Next</Button>
         </div>
     </>

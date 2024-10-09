@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import useStyles from './Profile.style.js'
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../features/auth.js';
@@ -14,14 +14,17 @@ export default function Profile() {
     
     const { user } = useSelector(userSelector);
     const sessionId = localStorage.getItem('session_id');
+    const [favoritePage, setFavoritePage] = useState(1);
+    const [watchlistPage, setWatchlistPage] = useState(1);
     const { data: favoriteMovies, 
         isFetching: isFetchingFavoriteMovies, 
-        refetch: refetchFavorites } = useGetListQuery({listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: 1});
+        refetch: refetchFavorites } = useGetListQuery({listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: favoritePage});
 
     const { data: watchlistMovies, 
         isFetching: isFetchingWatchlistMovies, 
-        refetch: refetchWatchlistes } = useGetListQuery({listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1});
+        refetch: refetchWatchlistes } = useGetListQuery({listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: watchlistPage});
 
+    console.log(watchlistMovies);
 
 
     useEffect(()=>{
@@ -54,8 +57,18 @@ export default function Profile() {
                 <Typography variant='h5' >Add favorite or watchlist some movies to see them here!</Typography>
                 : 
                 <Box>
-                    {favoriteMovies?.total_results? <RatedCards title='Favorite Movies' data={favoriteMovies} /> : ''}
-                    {watchlistMovies?.total_results? <RatedCards title='Watchlist' data={watchlistMovies}/> : ''}
+                    {favoriteMovies?.total_results? <RatedCards 
+                        title='Favorite Movies' 
+                        data={favoriteMovies} 
+                        page={favoritePage} 
+                        setPage={setFavoritePage}
+                    /> : ''}
+                    {watchlistMovies?.total_results? <RatedCards 
+                        title='Watchlist' 
+                        data={watchlistMovies}
+                        page={watchlistPage} 
+                        setPage={setWatchlistPage}
+                    /> : ''}
                 </Box> 
             }
         </Box>

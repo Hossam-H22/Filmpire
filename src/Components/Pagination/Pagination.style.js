@@ -9,6 +9,7 @@ export default makeStyles((theme)=>({
     },
     button: {
         margin: '30px 2px',
+        fontSize: '13px !important',
     },
     pageNumber: {
         margin: '0 20px !important',
