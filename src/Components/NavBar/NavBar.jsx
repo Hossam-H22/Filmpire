@@ -4,7 +4,6 @@ import { AppBar, IconButton, Toolbar, useMediaQuery, Drawer, Button, Avatar } fr
 import { Brightness7, Brightness4, AccountCircle, Menu } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles'
 import { Link } from 'react-router-dom';
-// import { Sidebar } from '..'
 import { Search, Sidebar } from './../index.js'
 import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,10 +24,10 @@ export default function NavBar() {
     const token = localStorage.getItem('request_token');
     const sessionIdFromLocalStorage = localStorage.getItem('session_id');
 
-    useEffect(()=>{
-        const logInUser = async ()=> {
-            if(token) {
-                if(sessionIdFromLocalStorage) {
+    useEffect(() => {
+        const logInUser = async () => {
+            if (token) {
+                if (sessionIdFromLocalStorage) {
                     const { data: userData } = await moviesApi.get(`/account?session_id=${sessionIdFromLocalStorage}`)
                     dispatch(setUser(userData));
                 }
@@ -40,8 +39,8 @@ export default function NavBar() {
             }
         }
         logInUser();
-    }, [token]);
-    
+    }, [dispatch, sessionIdFromLocalStorage, token]);
+
 
     return <>
         <AppBar position='fixed'>
@@ -51,7 +50,7 @@ export default function NavBar() {
                         color='inherit'
                         edge='start'
                         style={{ outline: 'none' }}
-                        onClick={()=>setMobileOpen((prevMobileOpen)=> !prevMobileOpen)}
+                        onClick={() => setMobileOpen((prevMobileOpen) => !prevMobileOpen)}
                         className={classes.menuButton}
                     >
                         <Menu />
@@ -78,9 +77,9 @@ export default function NavBar() {
                             <Avatar
                                 style={{ width: 30, height: 30 }}
                                 alt='Profile'
-                                src={user?.avater?.tmdb?.avatar_path? 
-                                        `https://www.themoviedb.org/t/p/w64_and_h64_face/${user?.avater?.tmdb?.avatar_path}` 
-                                        :  avater}
+                                src={user?.avater?.tmdb?.avatar_path ?
+                                    `https://www.themoviedb.org/t/p/w64_and_h64_face/${user?.avater?.tmdb?.avatar_path}`
+                                    : avater}
                             />
                         </Button>
                     )}
@@ -90,22 +89,18 @@ export default function NavBar() {
         </AppBar>
         <div>
             <nav className={classes.drawer}>
-                {isMobile ? <>
-                    <Drawer
-                        variant='temporary'
-                        anchor='right'
-                        open={mobileOpen}
-                        onClose={()=>setMobileOpen((prevMobileOpen)=> !prevMobileOpen)}
-                        classes={{ paper: classes.drawerPaper }}
-                        ModalProps={{ keepMounted: true }}
-                    >
-                        <Sidebar setMobileOpen={setMobileOpen} />
-                    </Drawer>
-                </> : <>
-                    <Drawer classes={{ paper: classes.drawerPaper }} variant='permanent' open >
-                        <Sidebar setMobileOpen={setMobileOpen} />
-                    </Drawer>
-                </>}
+                {isMobile ? <Drawer
+                    variant='temporary'
+                    anchor='right'
+                    open={mobileOpen}
+                    onClose={() => setMobileOpen((prevMobileOpen) => !prevMobileOpen)}
+                    classes={{ paper: classes.drawerPaper }}
+                    ModalProps={{ keepMounted: true }}
+                >
+                    <Sidebar setMobileOpen={setMobileOpen} />
+                </Drawer> : <Drawer classes={{ paper: classes.drawerPaper }} variant='permanent' open >
+                    <Sidebar setMobileOpen={setMobileOpen} />
+                </Drawer>}
             </nav>
         </div>
     </>

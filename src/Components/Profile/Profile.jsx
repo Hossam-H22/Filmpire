@@ -57,18 +57,18 @@ export default function Profile() {
                 <Typography variant='h5' >Add favorite or watchlist some movies to see them here!</Typography>
                 : 
                 <Box>
-                    {favoriteMovies?.total_results? <RatedCards 
+                    {favoriteMovies?.total_results && <RatedCards 
                         title='Favorite Movies' 
                         data={favoriteMovies} 
                         page={favoritePage} 
                         setPage={setFavoritePage}
-                    /> : ''}
-                    {watchlistMovies?.total_results? <RatedCards 
+                    />}
+                    {watchlistMovies?.total_results && <RatedCards 
                         title='Watchlist' 
                         data={watchlistMovies}
                         page={watchlistPage} 
                         setPage={setWatchlistPage}
-                    /> : ''}
+                    />}
                 </Box> 
             }
         </Box>

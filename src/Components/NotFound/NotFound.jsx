@@ -29,7 +29,7 @@ export default function NotFound({ path, message }) {
             />
         </Box>
         <Box className={classes.message}>
-            { message? <Button component={Link} to={path? path : '/'} className={classes.link} startIcon={<ArrowBack />} > {message} </Button> : null }
+            { message && <Button component={Link} to={path ?? '/'} className={classes.link} startIcon={<ArrowBack />} > {message} </Button> }
         </Box>
     </>
 }

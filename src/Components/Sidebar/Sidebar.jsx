@@ -74,6 +74,5 @@ export default function Sidebar({ setMobileOpen }) {
         </List>
         <Divider />
         <Footer />
-
     </>
 }

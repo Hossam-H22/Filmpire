@@ -175,7 +175,7 @@ export default function MovieInformation() {
                                     onClick={() => setOpen(true)} // open trailer videoa
                                     href=''
                                     endIcon={<Theaters />}
-                                    disabled={data?.videos?.results?.length > 0 ? false : true}
+                                    disabled={data?.videos?.results?.length===0}
                                 > Trailer </Button>
                                 <Button
                                     onClick={() => {
@@ -215,10 +215,10 @@ export default function MovieInformation() {
 
 
             {/* Recommended Movies */}
-            {recommendations?.total_results > 0 ? <Box marginTop='5rem' width='100%'>
+            {recommendations?.total_results > 0 && <Box marginTop='5rem' width='100%'>
                 <Typography variant='h3' gutterBottom align='center'>You might also like</Typography>
                 <MovieList movies={recommendations} numberOfMovies={12} />
-            </Box> : null}
+            </Box>}
 
 
             {/* Modal Movie */}
@@ -233,7 +233,7 @@ export default function MovieInformation() {
                         <ButtonGroup size='small' variant='contained' >
                             <Button
                                 onClick={() => {
-                                    if(movieServer==2){
+                                    if(movieServer===2){
                                         setMovieServer(1); 
                                         setIsIframeLoading(true);
                                     }
@@ -242,7 +242,7 @@ export default function MovieInformation() {
                             > Server 1 </Button>
                             <Button
                                 onClick={() =>  {
-                                    if(movieServer==1){
+                                    if(movieServer===1){
                                         setMovieServer(2); 
                                         setIsIframeLoading(true);
                                     }
@@ -265,7 +265,6 @@ export default function MovieInformation() {
                             autoPlay
                             frameBorder='0'
                             title='Movie'
-                            // src={ `https://www.2embed.cc/embed/${id}` or  `https://vidsrc.xyz/embed/movie/${id}` }
                             src={movieServer === 1 ? `https://vidsrc.xyz/embed/movie/${id}` : `https://www.2embed.cc/embed/${id}`}
                             allow='autoplay'
                             allowFullScreen

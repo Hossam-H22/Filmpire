@@ -19,24 +19,20 @@ export default function Movies() {
     if (isFetching) return <Loader size={'4rem'} />
 
     if (!data?.results?.length) {
-        return <>
-            <Box display='flex' alignItems='center' mt='20px'>
-                <Typography variant='h4'>
-                    No movies that match that name.
-                    <br />
-                    Please search for something else 🎥.
-                </Typography>
-            </Box>
-        </>
+        return <Box display='flex' alignItems='center' mt='20px'>
+            <Typography variant='h4'>
+                No movies that match that name.
+                <br />
+                Please search for something else 🎥.
+            </Typography>
+        </Box>
     }
 
     if (error) return <div>An error has occurd.</div>;
 
-    return <>
-        <div>
-            <FeaturedMovie movie={data?.results[0]} />
-            <MovieList movies={data} numberOfMovies={numberOfMovies} excludeFirst />
-            <Pagination curruntPage={page} setPage={setPage} totalPages={data?.total_pages} />
-        </div>
-    </>
+    return <div>
+        <FeaturedMovie movie={data?.results[0]} />
+        <MovieList movies={data} numberOfMovies={numberOfMovies} excludeFirst />
+        <Pagination curruntPage={page} setPage={setPage} totalPages={data?.total_pages} />
+    </div>
 }
