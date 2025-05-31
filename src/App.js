@@ -1,38 +1,30 @@
 
 import './App.css';
-import { CssBaseline } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import { Movies, MovieInformation, Actors, Profile, NavBar, NotFound } from './Components/index.js'
-import useStyles from './App.styles.js'
-import useAlan from './Components/Alan.jsx';
-import { useRef } from 'react';
+import { Movies, MovieInformation, Actors, Profile, NavBar, NotFound, Layout } from './Components/index.js'
 import { Helmet } from 'react-helmet';
+import NavigationScroll from './utils/NavigationScroll.jsx';
 
 function App() {
-
-  const classes = useStyles();
-  const alanBtnContainer = useRef();
-  // useAlan();
-
   return <>
     <Helmet>
-      <title>Filmpire</title>
+      <title>Filmpire, Home of Movies</title>
     </Helmet>
-    <div className={classes.root} >
-      <CssBaseline />
+    <Box sx={{ display: 'flex' }}>
       <NavBar />
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        <Routes>
-          <Route path='/' element={<Movies />} />
-          <Route path='/movie/:id' element={<MovieInformation />} />
-          <Route path='/actor/:id' element={<Actors />} />
-          <Route path='/profile/:id' element={<Profile />} />
-          <Route path='*' element={<NotFound />} />
-        </Routes>
-      </main>
-      <div ref={alanBtnContainer} />
-    </div>
+      <NavigationScroll>
+        <Layout>
+          <Routes>
+            <Route path='/' element={<Movies />} />
+            <Route path='/movie/:id' element={<MovieInformation />} />
+            <Route path='/actor/:id' element={<Actors />} />
+            <Route path='/profile/:id' element={<Profile />} />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </NavigationScroll>
+    </Box>
   </>;
 }
 

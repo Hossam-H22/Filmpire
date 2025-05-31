@@ -5,13 +5,14 @@ const drawerWidth = 240;
 
 export default makeStyles((theme) => ({
     toolbar: {
-        height: '80px',
+        height: '60px',
         display: 'flex',
         justifyContent: 'space-between',
         marginLeft: '240px',
         [theme.breakpoints.down('sm')]: {
             marginLeft: 0,
             flexWrap: 'wrap',
+            height: '80px',
         },
     },
     menuButton: {
