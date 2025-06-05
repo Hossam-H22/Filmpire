@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import useStyles from './Sidebar.style.js'
 import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText, IconButton } from '@mui/material'
 import { useTheme } from '@mui/styles';
@@ -10,7 +10,6 @@ import { Footer, Loader } from './../index.js'
 import genreIcons from './../../assests/genres/index.js'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
-import { ColorModeContext } from '../../utils/ToggoleColorMode.jsx';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 
 const categories = [
@@ -20,10 +19,9 @@ const categories = [
 ];
 
 
-export default function Sidebar({ setMobileOpen }) {
+export default function Sidebar({ setMobileOpen, changeTheme }) {
     const classes = useStyles();
     const theme = useTheme();
-    const colorMode = useContext(ColorModeContext);
     const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
     const { data, isLoading } = useGetGenresQuery();
     const dispatch = useDispatch();
@@ -41,7 +39,7 @@ export default function Sidebar({ setMobileOpen }) {
                 alt="Filmpire logo" />
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-            <IconButton color='inherit' onClick={colorMode.toggoleColorMode} >
+            <IconButton color='inherit' onClick={changeTheme} >
                 {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 sx={{ color: '#1976d2' }} />}
             </IconButton>
         </div>

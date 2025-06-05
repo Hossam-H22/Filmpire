@@ -16,6 +16,7 @@ export default function NavBar() {
     const classes = useStyles();
     const isMobile = useMediaQuery('(max-width: 900px)');
     const isMobileSmall = useMediaQuery('(max-width: 600px)');
+    const colorMode = useContext(ColorModeContext);
     const theme = useTheme();
     const dispatch = useDispatch();
     const { isAuthenticated, user } = useSelector(userSelector);
@@ -92,7 +93,7 @@ export default function NavBar() {
                     classes={{ paper: classes.drawerPaper }}
                     ModalProps={{ keepMounted: true }}
                 >
-                    <Sidebar setMobileOpen={setMobileOpen} />
+                    <Sidebar setMobileOpen={setMobileOpen} changeTheme={colorMode.toggoleColorMode} />
                 </Drawer>
             </nav>
         </div>
