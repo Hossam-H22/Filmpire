@@ -1,6 +1,6 @@
 
 import './App.css';
-import { Box, Container } from '@mui/material';
+import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import { Movies, MovieInformation, Actors, Profile, NavBar, NotFound, Layout } from './Components/index.js'
 import { Helmet } from 'react-helmet';
