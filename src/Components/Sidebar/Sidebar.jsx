@@ -20,20 +20,17 @@ const categories = [
 ];
 
 
-
 export default function Sidebar({ setMobileOpen }) {
     const classes = useStyles();
     const theme = useTheme();
     const colorMode = useContext(ColorModeContext);
-
     const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
-    const { data, isFetching } = useGetGenresQuery();
+    const { data, isLoading } = useGetGenresQuery();
     const dispatch = useDispatch();
 
-
-    useEffect(()=>{
+    useEffect(() => {
         setMobileOpen(false);
-    }, [genreIdOrCategoryName]);
+    }, [genreIdOrCategoryName, setMobileOpen]);
 
 
     return <>
@@ -69,9 +66,9 @@ export default function Sidebar({ setMobileOpen }) {
             <ListSubheader>
                 Genres
             </ListSubheader>
-            {isFetching? <Loader /> : data?.genres?.map(({ name, id }) => (
+            {isLoading ? <Loader /> : data?.genres?.map(({ name, id }) => (
                 <Link key={id} className={classes.links} to={`/`} >
-                    <ListItem onClick={() => dispatch(selectGenreOrCategory(id)) } button>
+                    <ListItem onClick={() => dispatch(selectGenreOrCategory(id))} button>
                         <ListItemIcon>
                             <img src={genreIcons[name.toLowerCase()]} alt="icon" className={classes.genereImages} height={30} />
                         </ListItemIcon>
