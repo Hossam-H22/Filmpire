@@ -5,5 +5,6 @@ export default makeStyles((theme)=>({
     root: {
         display: 'flex',
         backgroundColor: theme.palette.background.default,
+        height: '100vh',
     },
 }));

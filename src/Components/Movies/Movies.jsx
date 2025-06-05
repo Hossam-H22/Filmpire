@@ -14,7 +14,7 @@ export default function Movies() {
 
     if (!data?.results?.length) {
         return <Box display='flex' alignItems='center' mt='20px'>
-            <Typography variant='h4'>
+            <Typography variant='h4' color='text.primary'>
                 No movies that match that name.
                 <br />
                 Please search for something else 🎥.
