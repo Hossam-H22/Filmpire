@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import useStyles from './Sidebar.style.js'
-import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText } from '@mui/material'
+import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText, IconButton } from '@mui/material'
 import { useTheme } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import darkLogo from './../../assests/Dark_logo.png'
@@ -10,6 +10,8 @@ import { Footer, Loader } from './../index.js'
 import genreIcons from './../../assests/genres/index.js'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
+import { ColorModeContext } from '../../utils/ToggoleColorMode.jsx';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
 
 const categories = [
     { label: 'Popular', value: 'popular' },
@@ -22,6 +24,7 @@ const categories = [
 export default function Sidebar({ setMobileOpen }) {
     const classes = useStyles();
     const theme = useTheme();
+    const colorMode = useContext(ColorModeContext);
 
     const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
     const { data, isFetching } = useGetGenresQuery();
@@ -40,6 +43,11 @@ export default function Sidebar({ setMobileOpen }) {
                 src={theme.palette.mode === 'light' ? lightLogo : darkLogo}
                 alt="Filmpire logo" />
         </Link>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+            <IconButton color='inherit' onClick={colorMode.toggoleColorMode} >
+                {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 sx={{ color: '#1976d2' }} />}
+            </IconButton>
+        </div>
         <Divider />
         <List>
             <ListSubheader>
