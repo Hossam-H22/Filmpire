@@ -5,14 +5,17 @@ import { Route, Routes } from 'react-router-dom';
 import { Movies, MovieInformation, Actors, Profile, NavBar, NotFound, Layout } from './Components/index.js'
 import { Helmet } from 'react-helmet';
 import NavigationScroll from './utils/NavigationScroll.jsx';
+import useStyles from './App.styles.js';
 
 function App() {
+  const classes = useStyles();
+
   return <>
     <Helmet>
       <title>Filmpire, Home of Movies</title>
     </Helmet>
-    <Box sx={{ display: 'flex' }}>
-      <NavBar />
+    <Box className={classes.root}>
+      <NavBar />  
       <NavigationScroll>
         <Layout>
           <Routes>
