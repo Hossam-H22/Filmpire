@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import useStyles from './MovieInformation.style.js'
 import { Modal, Typography, Button, ButtonGroup, Grid, Box, Rating } from '@mui/material';
-import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, ArrowBack, Close, DesignServicesOutlined, Dns, } from '@mui/icons-material'
+import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, Close, Dns, } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
@@ -31,7 +31,7 @@ export default function MovieInformation() {
     const { data, isFetching, error } = useGetMovieQuery(id);
     const { data: favoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: 1 });
     const { data: watchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1 });
-    const { data: recommendations, isFetching: isRecommendationsFetching } = useGetRecommendationsQuery({ list: 'recommendations', movie_id: id });
+    const { data: recommendations } = useGetRecommendationsQuery({ list: 'recommendations', movie_id: id });
 
     function formatDate(inputDate) {
         const months = [
@@ -91,7 +91,7 @@ export default function MovieInformation() {
         <Helmet>
             <title>Film: {data?.title}</title>
         </Helmet>
-        <Grid container className={classes.containerSpaceAround} >
+        <Grid container className={classes.containerSpaceAround} sx={{ padding: '20px' }} >
             <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
                 <img
                     className={classes.poster}
@@ -178,12 +178,12 @@ export default function MovieInformation() {
                                     onClick={() => setOpen(true)} // open trailer videoa
                                     href=''
                                     endIcon={<Theaters />}
-                                    disabled={data?.videos?.results?.length===0}
+                                    disabled={data?.videos?.results?.length === 0}
                                 > Trailer </Button>
                                 <Button
                                     onClick={() => {
                                         setPlayMovie(true);
-                                        setMovieServer(1); 
+                                        setMovieServer(1);
                                         setIsIframeLoading(true);
                                     }}
                                     endIcon={<MovieIcon />}
@@ -201,15 +201,6 @@ export default function MovieInformation() {
                                     onClick={addToWatchlist}
                                     endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
                                 > WatchList </Button>
-                                {/* <Button sx={{ borderColor: 'primary.main' }} endIcon={<ArrowBack />} >
-                                    <Typography
-                                        component={Link}
-                                        to={`/`}
-                                        color='inherit'
-                                        variant='subtitle2'
-                                        style={{ textDecoration: 'none' }}
-                                    > Back </Typography>
-                                </Button> */}
                             </ButtonGroup>
                         </Grid>
                     </div>
@@ -232,21 +223,21 @@ export default function MovieInformation() {
                 disableBackdropClick
             >
                 <div className={classes.movieModelDiv} >
-                    <Grid item className={classes.buttonsContainer} style={{justifyContent: 'space-between'}}>
+                    <Grid item className={classes.buttonsContainer} style={{ justifyContent: 'space-between' }}>
                         <ButtonGroup size='small' variant='contained' >
                             <Button
                                 onClick={() => {
-                                    if(movieServer===2){
-                                        setMovieServer(1); 
+                                    if (movieServer === 2) {
+                                        setMovieServer(1);
                                         setIsIframeLoading(true);
                                     }
                                 }}
                                 endIcon={<Dns />}
                             > Server 1 </Button>
                             <Button
-                                onClick={() =>  {
-                                    if(movieServer===1){
-                                        setMovieServer(2); 
+                                onClick={() => {
+                                    if (movieServer === 1) {
+                                        setMovieServer(2);
                                         setIsIframeLoading(true);
                                     }
                                 }}
@@ -260,10 +251,10 @@ export default function MovieInformation() {
                             > Close </Button>
                         </ButtonGroup>
                     </Grid>
-                    <div style={{width: '100%', height: '100%', position: 'relative'}}>
+                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                         {isIframeLoading && <div className={classes.movieLoader} >
                             <Loader size='4rem' />
-                        </div> }
+                        </div>}
                         <iframe
                             autoPlay
                             frameBorder='0'
@@ -275,7 +266,7 @@ export default function MovieInformation() {
                             width="100%"
                             height="100%"
                             onLoad={() => setIsIframeLoading(false)}
-                            style={{backgroundColor: "black"}}
+                            style={{ backgroundColor: "black" }}
                         />
                     </div>
                 </div>

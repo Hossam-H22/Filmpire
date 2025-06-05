@@ -3,8 +3,9 @@ import { makeStyles } from '@mui/styles';
 
 export default makeStyles((theme)=>({
     root: {
-        display: 'flex',
         backgroundColor: theme.palette.background.default,
-        height: '100vh',
+        color: theme.palette.text.primary,  
+        display: 'flex',
+        minHeight: '100vh',
     },
 }));
