@@ -134,19 +134,22 @@ export default function MovieInformation() {
                 <Grid item container spacing={2}> {/* Cast Data Grid */}
                     {data?.credits?.cast?.map((character, index) => (character?.profile_path && (
                         <Grid
-                            key={index}
+                            key={character?.id}
                             item
                             xs={4} md={2}
                             component={Link}
                             to={`/actor/${character?.id}`}
-                            style={{ textDecoration: 'none' }}
+                            sx={{
+                                textDecoration: 'none',
+                                textAlign: 'center'
+                            }}
                         >
                             <img
                                 className={classes.castImage}
                                 src={`${process.env.REACT_APP_IMAGE_BASE_LINK}/${character?.profile_path}`}
                                 alt={character?.name}
                             />
-                            <Typography color='textPrimary'>{character?.name}</Typography>
+                            <Typography color='textPrimary' sx={{ width: '100%' }}>{character?.name}</Typography>
                             <Typography color='textSecondary'>{character?.character?.split('/')[0]}</Typography>
                         </Grid>))
                     ).slice(0, 6)}
