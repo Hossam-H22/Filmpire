@@ -6,6 +6,7 @@ export default makeStyles((theme)=>({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: '20px',
     },
     button: {
         margin: '30px 2px',
