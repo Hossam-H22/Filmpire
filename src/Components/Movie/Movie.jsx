@@ -7,7 +7,7 @@ import moviePoster from '../../assests/movie-poster.png'
 export default function Movie({ movie }) {
     const classes = useStyles();
 
-    return <Grid item xs={12} sm={6} md={4} lg={3} xl={3} mb={3} >
+    return <Grid item xs={12} sm={6} md={4} lg={3} xl={2} sx={{ padding: '0 10px', marginBottom: '10px' }} >
         <Link className={classes.links} to={`/movie/${movie?.id}`} >
             <img alt={movie?.title} className={classes.image}
                 src={movie?.poster_path ? `${process.env.REACT_APP_IMAGE_BASE_LINK}${movie?.poster_path}` : moviePoster} />

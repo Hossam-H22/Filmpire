@@ -12,8 +12,8 @@ export default makeStyles((theme)=>({
         textAlign: 'center',
     },
     links: {
-        alignItems: 'center',
         display: 'flex',
+        alignItems: 'center',
         flexDirection: 'column',
         cursor: 'pointer',
     },
@@ -21,6 +21,8 @@ export default makeStyles((theme)=>({
         borderRadius: '20px',
         height: '300px',
         transition: 'all 0.2s',
+        objectFit: 'cover',
+        maxWidth: '100% !important',
         '&:hover': {
             transform: 'scale(1.03)',
         },
