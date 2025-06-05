@@ -5,7 +5,7 @@ export default makeStyles((theme)=>({
     title: {
         color: theme.palette.text.primary,
         textOverflow: 'ellipsis',
-        width: '230px',
+        width: '100% !important',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         marginTop: '20px',
