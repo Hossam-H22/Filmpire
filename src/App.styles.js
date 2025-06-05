@@ -1,17 +1,11 @@
 
 import { makeStyles } from '@mui/styles';
 
-export default makeStyles(()=>({
+export default makeStyles((theme)=>({
     root: {
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,  
         display: 'flex',
-        hight: '100%',
-    },
-    toolbar: {
-        height: '70px',
-    },
-    content: {
-        flexGrow: '1',
-        padding: '1.5em',
-        width: '100% !important',
+        minHeight: '100vh',
     },
 }));

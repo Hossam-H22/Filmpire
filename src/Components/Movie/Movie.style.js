@@ -2,38 +2,29 @@
 import { makeStyles } from "@mui/styles";
 
 export default makeStyles((theme)=>({
-    movie: {
-        padding: '10px',
-    },
     title: {
         color: theme.palette.text.primary,
         textOverflow: 'ellipsis',
-        width: '230px',
+        width: '100% !important',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
-        marginTop: '10px',
-        marginBottom: 0,
+        marginTop: '20px',
         textAlign: 'center',
     },
     links: {
+        display: 'flex',
         alignItems: 'center',
-        fontWeight: 'bolder',
-        textDecoration: 'none',
-        [theme.breakpoints.up('xs')]: {
-            display: 'flex',
-            flexDirection: 'column',
-        },
-        '&:hover': {
-            cursor: 'pointer',
-        },
+        flexDirection: 'column',
+        cursor: 'pointer',
     },
     image: {
         borderRadius: '20px',
         height: '300px',
-        marginBottom: '10px',
         transition: 'all 0.2s',
+        objectFit: 'cover',
+        maxWidth: '100% !important',
         '&:hover': {
-            transform: 'scale(1.05)',
+            transform: 'scale(1.03)',
         },
     },
 }));

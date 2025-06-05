@@ -25,7 +25,7 @@ export default function Actors() {
         <Helmet>
             <title>Actor: {data?.name}</title>
         </Helmet>
-        <Grid container spacing={3} >
+        <Grid container spacing={2} sx={{ padding: '20px' }} >
             <Grid item lg={5} xl={4} >
                 <img
                     className={classes.image}

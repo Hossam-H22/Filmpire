@@ -1,13 +1,11 @@
 import React from 'react'
-import useStyles from './Loader.style.js'
 import { Box, CircularProgress } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 export default function Loader({ size }) {
-    const classes = useStyles();
+    const theme = useTheme();
 
-    return <>
-        <Box display='flex' justifyContent='center' >
-            <CircularProgress size={size? size: '2rem'} />
-        </Box>
-    </>
+    return <Box display='flex' justifyContent='center' mt={2} >
+        <CircularProgress size={size ?? '2rem'} sx={{ color: theme.palette.mode === 'dark' ? '#fff': theme.palette.primary }} />
+    </Box>
 }

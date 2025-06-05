@@ -15,7 +15,7 @@ export default function Search() {
     const navigate = useNavigate();
 
     function handleKeyPress(e) {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
             dispatch(searchMovie(query));
             navigate('/');
         }
@@ -23,22 +23,20 @@ export default function Search() {
 
     // if(location.pathname !== '/') return null
 
-    return <>
-        <div className={classes.searchContainer}>
-            <TextField 
-                onKeyPress={handleKeyPress} 
-                value={query} 
-                onChange={(e)=> setQuery(e.target.value)} 
-                variant='standard' 
-                InputProps={{
-                    className: classes.input,
-                    startAdornment: (
-                        <InputAdornment position='start' >
-                            <SearchIcon />
-                        </InputAdornment>
-                    ),
-                }}
-            />
-        </div>
-    </>
+    return <div className={classes.searchContainer}>
+        <TextField
+            onKeyPress={handleKeyPress}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            variant='standard'
+            InputProps={{
+                className: classes.input,
+                startAdornment: (
+                    <InputAdornment position='start' >
+                        <SearchIcon />
+                    </InputAdornment>
+                ),
+            }}
+        />
+    </div>
 }

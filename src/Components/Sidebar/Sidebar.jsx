@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import useStyles from './Sidebar.style.js'
-import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText } from '@mui/material'
+import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText, IconButton } from '@mui/material'
 import { useTheme } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import darkLogo from './../../assests/Dark_logo.png'
@@ -10,6 +10,7 @@ import { Footer, Loader } from './../index.js'
 import genreIcons from './../../assests/genres/index.js'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
 
 const categories = [
     { label: 'Popular', value: 'popular' },
@@ -18,19 +19,16 @@ const categories = [
 ];
 
 
-
-export default function Sidebar({ setMobileOpen }) {
+export default function Sidebar({ setMobileOpen, changeTheme }) {
     const classes = useStyles();
     const theme = useTheme();
-
     const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
-    const { data, isFetching } = useGetGenresQuery();
+    const { data, isLoading } = useGetGenresQuery();
     const dispatch = useDispatch();
 
-
-    useEffect(()=>{
+    useEffect(() => {
         setMobileOpen(false);
-    }, [genreIdOrCategoryName]);
+    }, [genreIdOrCategoryName, setMobileOpen]);
 
 
     return <>
@@ -40,6 +38,11 @@ export default function Sidebar({ setMobileOpen }) {
                 src={theme.palette.mode === 'light' ? lightLogo : darkLogo}
                 alt="Filmpire logo" />
         </Link>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+            <IconButton color='inherit' onClick={changeTheme} >
+                {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 sx={{ color: '#1976d2' }} />}
+            </IconButton>
+        </div>
         <Divider />
         <List>
             <ListSubheader>
@@ -61,9 +64,9 @@ export default function Sidebar({ setMobileOpen }) {
             <ListSubheader>
                 Genres
             </ListSubheader>
-            {isFetching? <Loader /> : data?.genres?.map(({ name, id }) => (
+            {isLoading ? <Loader /> : data?.genres?.map(({ name, id }) => (
                 <Link key={id} className={classes.links} to={`/`} >
-                    <ListItem onClick={() => dispatch(selectGenreOrCategory(id)) } button>
+                    <ListItem onClick={() => dispatch(selectGenreOrCategory(id))} button>
                         <ListItemIcon>
                             <img src={genreIcons[name.toLowerCase()]} alt="icon" className={classes.genereImages} height={30} />
                         </ListItemIcon>
@@ -74,6 +77,5 @@ export default function Sidebar({ setMobileOpen }) {
         </List>
         <Divider />
         <Footer />
-
     </>
 }

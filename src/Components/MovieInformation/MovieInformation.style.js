@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 
 export default makeStyles((theme) => ({
     containerSpaceAround: {
+        color: theme.palette.text.primary,
         display: 'flex',
         justifyContent: 'space-around',
         margin: '10px 0 !important',
@@ -12,6 +13,7 @@ export default makeStyles((theme) => ({
         },
     },
     posterContainer: {
+        textAlign: 'center',
         [theme.breakpoints.down('lg')]: {
             display: 'flex !important',
             justifyContent: 'center !important',
@@ -21,7 +23,7 @@ export default makeStyles((theme) => ({
     poster: {
         borderRadius: '20px',
         boxShadow: '0.5em 1em 1em #404046bf', // rgp(64, 64, 70)
-        width: '80%',
+        width: '100%',
         [theme.breakpoints.down('lg')]: {
             margin: '0 auto',
             width: '50%',
