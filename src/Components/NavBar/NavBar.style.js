@@ -11,14 +11,9 @@ export default makeStyles((theme) => ({
         marginLeft: '240px',
         [theme.breakpoints.down('md')]: {
             marginLeft: 0,
-            // flexWrap: 'wrap',
         },
-        // [theme.breakpoints.down('sm')]: {
-        //     height: '80px',
-        // },
     },
     menuButton: {
-        // marginRight: theme.spacing(2),
         [theme.breakpoints.up('md')]: {
             display: 'none',
         },
