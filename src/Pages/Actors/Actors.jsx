@@ -3,8 +3,8 @@ import useStyles from './Actors.style.js'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
-import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from '../../services/TMDB.js';
-import { Loader, MovieList, NotFound, Pagination } from './../index.js'
+import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from './../../services/TMDB.js';
+import { Loader, MovieList, NotFound, Pagination } from './../../Components/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import { Helmet } from 'react-helmet';
 
