@@ -16,8 +16,6 @@ export default function Actors() {
     const { data, isFetching, error } = useGetActorsDetailsQuery(id);
     const { data: movies } = useGetMoviesByActorIdQuery({id, page});
 
-
-
     if (isFetching) return <Loader size='8rem' />
     if (error) return <NotFound path={`/`} message='Something has gone wrong - Go back' />
 
@@ -48,10 +46,10 @@ export default function Actors() {
                 </Box>
             </Grid>
         </Grid>
-        {movies?.total_results > 0 ? <Box marginTop='5rem' width='100%'> {/* Recommended Movies */}
+        {movies?.total_results > 0 && <Box marginTop='5rem' width='100%'> {/* Recommended Movies */}
             <Typography variant='h2' gutterBottom align='center'>Movies</Typography>
             <MovieList movies={movies} numberOfMovies={12} />
             <Pagination curruntPage={page} setPage={setPage} totalPages={movies?.total_pages} />
-        </Box> : null}
+        </Box>}
     </>
 }
