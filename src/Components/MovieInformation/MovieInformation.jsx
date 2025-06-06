@@ -154,56 +154,54 @@ export default function MovieInformation() {
                         </Grid>))
                     ).slice(0, 6)}
                 </Grid>
-                <Grid item container style={{ marginTop: '2rem' }}> {/* Buttons Grid */}
-                    <div className={classes.buttonsContainer}>
-                        <Grid item className={classes.buttonsContainer} style={{ marginBottom: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
-                            <ButtonGroup size='medium' variant='outlined'>
-                                <Button
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    href={data?.homepage ? data?.homepage : '#'}
-                                    endIcon={<Language />}
-                                > Website </Button>
-                                <Button
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    href={`https://www.imdb.com/title/${data?.imdb_id}`}
-                                    endIcon={<Language />}
-                                > IMDB </Button>
-                            </ButtonGroup>
-                        </Grid>
-                        <Grid item className={classes.buttonsContainer} style={{ marginBottom: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
-                            <ButtonGroup size='medium' variant='outlined'>
-                                <Button
-                                    onClick={() => setOpen(true)} // open trailer videoa
-                                    href=''
-                                    endIcon={<Theaters />}
-                                    disabled={data?.videos?.results?.length === 0}
-                                > Trailer </Button>
-                                <Button
-                                    onClick={() => {
-                                        setPlayMovie(true);
-                                        setMovieServer(1);
-                                        setIsIframeLoading(true);
-                                    }}
-                                    endIcon={<MovieIcon />}
-                                > Watch Now
-                                </Button>
-                            </ButtonGroup>
-                        </Grid>
-                        <Grid item className={classes.buttonsContainer} style={{ marginBottom: '20px', marginLeft: 'auto', marginRight: 'auto' }}>
-                            <ButtonGroup size='medium' variant='outlined'>
-                                <Button
-                                    onClick={addToFavorites}
-                                    endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}
-                                > {isMovieFavorited ? 'Unfavorite' : 'Favorite'} </Button>
-                                <Button
-                                    onClick={addToWatchlist}
-                                    endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
-                                > WatchList </Button>
-                            </ButtonGroup>
-                        </Grid>
-                    </div>
+                <Grid item container gap={1} sx={{ marginTop: '2rem', justifyContent: 'center' }}> {/* Buttons Grid */}
+                    <Button
+                        size='small' 
+                        variant='outlined'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        href={data?.homepage ? data?.homepage : '#'}
+                        endIcon={<Language />}
+                    > Website </Button>
+                    <Button
+                        size='small' 
+                        variant='outlined'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        href={`https://www.imdb.com/title/${data?.imdb_id}`}
+                        endIcon={<Language />}
+                    > IMDB </Button>
+                    <Button
+                        size='small' 
+                        variant='outlined'
+                        onClick={() => setOpen(true)} // open trailer videoa
+                        href=''
+                        endIcon={<Theaters />}
+                        disabled={data?.videos?.results?.length === 0}
+                    > Trailer </Button>
+                    <Button
+                        size='small' 
+                        variant='outlined'
+                        onClick={() => {
+                            setPlayMovie(true);
+                            setMovieServer(1);
+                            setIsIframeLoading(true);
+                        }}
+                        endIcon={<MovieIcon />}
+                    > Watch Now
+                    </Button>
+                    <Button
+                        size='small' 
+                        variant='outlined'
+                        onClick={addToFavorites}
+                        endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}
+                    > {isMovieFavorited ? 'Unfavorite' : 'Favorite'} </Button>
+                    <Button
+                        size='small' 
+                        variant='outlined'
+                        onClick={addToWatchlist}
+                        endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
+                    > WatchList </Button>
                 </Grid>
             </Grid>
 
