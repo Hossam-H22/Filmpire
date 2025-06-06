@@ -1,5 +1,5 @@
 export { default as Actors } from '../Pages/Actors/Actors.jsx';
-export { default as Profile } from './Profile/Profile.jsx';
+export { default as Profile } from '../Pages/Profile/Profile.jsx';
 export { default as NavBar } from './NavBar/NavBar.jsx';
 export { default as Footer } from './Footer/Footer.jsx';
 export { default as NotFound } from './NotFound/NotFound.jsx';
