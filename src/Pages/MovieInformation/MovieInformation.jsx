@@ -7,7 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
 import axios from 'axios';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { Loader, MovieList, NotFound } from './../../Components/index.js'
+import { Loader, MovieList } from './../../Components/index.js'
+import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import genreIcons from './../../assests/genres/index.js'
 import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';

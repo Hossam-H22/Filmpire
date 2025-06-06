@@ -2,7 +2,6 @@ export { default as Actors } from '../Pages/Actors/Actors.jsx';
 export { default as Profile } from '../Pages/Profile/Profile.jsx';
 export { default as NavBar } from './NavBar/NavBar.jsx';
 export { default as Footer } from './Footer/Footer.jsx';
-export { default as NotFound } from './NotFound/NotFound.jsx';
 export { default as Sidebar } from './Sidebar/Sidebar.jsx';
 export { default as MovieList } from './MovieList/MovieList.jsx';
 export { default as Movie } from './Movie/Movie.jsx';
