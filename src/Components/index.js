@@ -1,6 +1,3 @@
-
-
-export { default as MovieInformation } from './MovieInformation/MovieInformation.jsx';
 export { default as Actors } from './Actors/Actors.jsx';
 export { default as Profile } from './Profile/Profile.jsx';
 export { default as NavBar } from './NavBar/NavBar.jsx';
@@ -15,6 +12,3 @@ export { default as Pagination } from './Pagination/Pagination.jsx';
 export { default as RatedCards } from './RatedCards/RatedCards.jsx';
 export { default as FeaturedMovie } from './FeaturedMovie/FeaturedMovie.jsx';
 export { default as Layout } from './Layout/Layout.jsx';
-
-
-
