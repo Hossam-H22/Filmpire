@@ -1,10 +1,10 @@
 import React from 'react'
-import useStyles from './Movie.style.js'
+import useStyles from './MovieCard.style.js'
 import { Typography, Grid, Tooltip, Rating } from '@mui/material'
 import { Link } from 'react-router-dom';
-import moviePoster from '../../assests/movie-poster.png'
+import moviePoster from './../../assests/movie-poster.png'
 
-export default function Movie({ movie }) {
+export default function MovieCard({ movie }) {
     const classes = useStyles();
 
     return <Grid item xs={12} sm={6} md={4} lg={3} xl={2} sx={{ padding: '0 10px', marginBottom: '20px' }} >

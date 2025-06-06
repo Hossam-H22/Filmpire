@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { userSelector } from '../../features/auth.js';
+import { userSelector } from './../../features/auth.js';
 import { Box, Button, Typography } from '@mui/material';
 import { ExitToApp } from '@mui/icons-material';
-import { useGetListQuery } from '../../services/TMDB.js';
-import { Loader, RatedCards } from './../index.js'
+import { useGetListQuery } from './../../services/TMDB.js';
+import { Loader, RatedCards } from './../../Components/index.js'
 import { Helmet } from 'react-helmet';
 
 

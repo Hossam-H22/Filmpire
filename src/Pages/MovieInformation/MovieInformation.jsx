@@ -6,12 +6,13 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
 import axios from 'axios';
-import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from '../../services/TMDB.js';
-import { Loader, MovieList, NotFound } from './../index.js'
+import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
+import { Loader, MovieList } from './../../Components/index.js'
+import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import genreIcons from './../../assests/genres/index.js'
-import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
-import { userSelector } from '../../features/auth.js';
+import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
+import { userSelector } from './../../features/auth.js';
 
 export default function MovieInformation() {
     const classes = useStyles();
@@ -156,7 +157,7 @@ export default function MovieInformation() {
                 </Grid>
                 <Grid item container gap={1} sx={{ marginTop: '2rem', justifyContent: 'center' }}> {/* Buttons Grid */}
                     <Button
-                        size='small' 
+                        size='small'
                         variant='outlined'
                         target='_blank'
                         rel='noopener noreferrer'
@@ -164,7 +165,7 @@ export default function MovieInformation() {
                         endIcon={<Language />}
                     > Website </Button>
                     <Button
-                        size='small' 
+                        size='small'
                         variant='outlined'
                         target='_blank'
                         rel='noopener noreferrer'
@@ -172,7 +173,7 @@ export default function MovieInformation() {
                         endIcon={<Language />}
                     > IMDB </Button>
                     <Button
-                        size='small' 
+                        size='small'
                         variant='outlined'
                         onClick={() => setOpen(true)} // open trailer videoa
                         href=''
@@ -180,7 +181,7 @@ export default function MovieInformation() {
                         disabled={data?.videos?.results?.length === 0}
                     > Trailer </Button>
                     <Button
-                        size='small' 
+                        size='small'
                         variant='outlined'
                         onClick={() => {
                             setPlayMovie(true);
@@ -191,13 +192,13 @@ export default function MovieInformation() {
                     > Watch Now
                     </Button>
                     <Button
-                        size='small' 
+                        size='small'
                         variant='outlined'
                         onClick={addToFavorites}
                         endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}
                     > {isMovieFavorited ? 'Unfavorite' : 'Favorite'} </Button>
                     <Button
-                        size='small' 
+                        size='small'
                         variant='outlined'
                         onClick={addToWatchlist}
                         endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}

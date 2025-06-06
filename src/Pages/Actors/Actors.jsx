@@ -3,8 +3,9 @@ import useStyles from './Actors.style.js'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
-import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from '../../services/TMDB.js';
-import { Loader, MovieList, NotFound, Pagination } from './../index.js'
+import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from './../../services/TMDB.js';
+import { Loader, MovieList, Pagination } from './../../Components/index.js'
+import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import { Helmet } from 'react-helmet';
 
@@ -15,8 +16,6 @@ export default function Actors() {
     const [page, setPage] = useState(1);
     const { data, isFetching, error } = useGetActorsDetailsQuery(id);
     const { data: movies } = useGetMoviesByActorIdQuery({id, page});
-
-
 
     if (isFetching) return <Loader size='8rem' />
     if (error) return <NotFound path={`/`} message='Something has gone wrong - Go back' />
@@ -48,10 +47,10 @@ export default function Actors() {
                 </Box>
             </Grid>
         </Grid>
-        {movies?.total_results > 0 ? <Box marginTop='5rem' width='100%'> {/* Recommended Movies */}
+        {movies?.total_results > 0 && <Box marginTop='5rem' width='100%'> {/* Recommended Movies */}
             <Typography variant='h2' gutterBottom align='center'>Movies</Typography>
             <MovieList movies={movies} numberOfMovies={12} />
             <Pagination curruntPage={page} setPage={setPage} totalPages={movies?.total_pages} />
-        </Box> : null}
+        </Box>}
     </>
 }

@@ -2,10 +2,11 @@
 import './App.css';
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import { Movies, MovieInformation, Actors, Profile, NavBar, NotFound, Layout } from './Components/index.js'
+import { NavBar } from './Components/index.js'
 import { Helmet } from 'react-helmet';
 import NavigationScroll from './utils/NavigationScroll.jsx';
 import useStyles from './App.styles.js';
+import { Layout, Movies, MovieInformation, Actors, Profile, NotFound } from './Pages/index.js';
 
 function App() {
   const classes = useStyles();
@@ -15,7 +16,7 @@ function App() {
       <title>Filmpire, Home of Movies</title>
     </Helmet>
     <Box className={classes.root}>
-      <NavBar />  
+      <NavBar />
       <NavigationScroll>
         <Layout>
           <Routes>
