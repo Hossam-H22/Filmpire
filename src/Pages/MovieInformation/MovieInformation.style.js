@@ -54,59 +54,10 @@ export default makeStyles((theme) => ({
         filter: theme.palette.mode === 'dark' && 'invert(1)',
         marginRight: '10px',
     },
-    buttonsContainer: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        width: '100%',
-        [theme.breakpoints.down('xl')]: {
-            justifyContent: 'center',
-            flexDirection: 'column',
-        },
-        [theme.breakpoints.down('lg')]: {
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-        },
-        [theme.breakpoints.down('md')]: {
-            justifyContent: 'center',
-            flexDirection: 'column',
-        },
-    },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-    },
-    videos: {
-        width: '50%',
-        height: '50%',
-        [theme.breakpoints.down('sm')]: {
-            width: '90%',
-            height: '50%',
-        },
-    },
-    movieModelDiv: {
-        width: '60vw',
-        height: '60%',
-        position: 'relative',
-        [theme.breakpoints.down('md')]: {
-            width: '90%',
-            height: '50%',
-        },
-        [theme.breakpoints.down('sm')]: {
-            width: '90%',
-            height: '40%',
-        },
-    },
-    movieCloseBtn: {
-        position: 'absolute',
-        right: '10px',
-        top: '10px',
-    },
     movieLoader: {
         position: 'absolute',
-        right: '0px',
-        left: '0px',
-        top: '40%',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
     },
 }));

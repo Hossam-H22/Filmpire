@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import useStyles from './MovieInformation.style.js'
-import { Modal, Typography, Button, ButtonGroup, Grid, Box, Rating } from '@mui/material';
-import { Movie as MovieIcon, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, Close, Dns, } from '@mui/icons-material'
+import { Typography, Button, Grid, Box, Rating } from '@mui/material';
+import { Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
@@ -18,9 +18,7 @@ export default function MovieInformation() {
     const classes = useStyles();
     const dispatch = useDispatch();
     const { user } = useSelector(userSelector);
-    const [isIframeLoading, setIsIframeLoading] = useState(false);
-    const [playMovie, setPlayMovie] = useState(false);
-    const [movieServer, setMovieServer] = useState(1);
+    const [isMovieLoading, setIsMovieLoading] = useState(true);
     const [isMovieFavorited, setIsMovieFavorited] = useState(false);
     const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
     const { id } = useParams();
@@ -148,17 +146,6 @@ export default function MovieInformation() {
                     <Button
                         size='small'
                         variant='outlined'
-                        onClick={() => {
-                            setPlayMovie(true);
-                            setMovieServer(1);
-                            setIsIframeLoading(true);
-                        }}
-                        endIcon={<MovieIcon />}
-                    > Watch Now
-                    </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
                         onClick={addToFavorites}
                         endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}
                     > {isMovieFavorited ? 'Unfavorite' : 'Favorite'} </Button>
@@ -187,6 +174,24 @@ export default function MovieInformation() {
                         ))}
                     </Grid>
                 </CollapseLine>
+                <CollapseLine title="Watch Now" >
+                    <Grid item container px={1} sx={{ display: 'flex', width: '100%', position: 'relative' }}>
+                        {isMovieLoading && <div className={classes.movieLoader} >
+                            <Loader size='4rem' removeMargin />
+                        </div>}
+                        <iframe
+                            autoPlay
+                            title='Movie'
+                            src={`https://vidsrc.xyz/embed/movie/${id}`}
+                            // src={`https://www.2embed.cc/embed/${id}`}
+                            allow='autoplay'
+                            allowFullScreen
+                            scrolling="no"
+                            onLoad={() => setIsMovieLoading(false)}
+                            style={{ backgroundColor: "black", width: '100%', height: '100%', aspectRatio: '16/9', borderRadius: '10px' }}
+                        />
+                    </Grid>
+                </CollapseLine>
             </Grid>
 
             {/* Recommended Movies */}
@@ -194,65 +199,6 @@ export default function MovieInformation() {
                 <Typography variant='h3' gutterBottom align='center'>You might also like</Typography>
                 <MovieList movies={recommendations} numberOfMovies={12} />
             </Box>}
-
-
-            {/* Modal Movie */}
-            {playMovie && <Modal
-                closeAfterTransition
-                className={classes.modal}
-                open={playMovie}
-                disableBackdropClick
-            >
-                <div className={classes.movieModelDiv} >
-                    <Grid item className={classes.buttonsContainer} style={{ justifyContent: 'space-between' }}>
-                        <ButtonGroup size='small' variant='contained' >
-                            <Button
-                                onClick={() => {
-                                    if (movieServer === 2) {
-                                        setMovieServer(1);
-                                        setIsIframeLoading(true);
-                                    }
-                                }}
-                                endIcon={<Dns />}
-                            > Server 1 </Button>
-                            <Button
-                                onClick={() => {
-                                    if (movieServer === 1) {
-                                        setMovieServer(2);
-                                        setIsIframeLoading(true);
-                                    }
-                                }}
-                                endIcon={<Dns />}
-                            > Server 2 </Button>
-                        </ButtonGroup>
-                        <ButtonGroup size='small' variant='contained' >
-                            <Button
-                                onClick={() => setPlayMovie(false)}
-                                endIcon={<Close />}
-                            > Close </Button>
-                        </ButtonGroup>
-                    </Grid>
-                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                        {isIframeLoading && <div className={classes.movieLoader} >
-                            <Loader size='4rem' />
-                        </div>}
-                        <iframe
-                            autoPlay
-                            frameBorder='0'
-                            title='Movie'
-                            src={movieServer === 1 ? `https://vidsrc.xyz/embed/movie/${id}` : `https://www.2embed.cc/embed/${id}`}
-                            allow='autoplay'
-                            allowFullScreen
-                            scrolling="no"
-                            width="100%"
-                            height="100%"
-                            onLoad={() => setIsIframeLoading(false)}
-                            style={{ backgroundColor: "black" }}
-                        />
-                    </div>
-                </div>
-            </Modal>}
-
         </Grid>
     </>
 }
