@@ -10,7 +10,7 @@ export default function TrailerCard({ video }) {
     return (
         <Grid item xs={12} sm={6} lg={3} p={1} sx={{ position: 'relative' }}>
             {isLoading && <div className={classes.Loader} >
-                <Loader size='3rem' />
+                <Loader size='3rem' removeMargin />
             </div>}
             <iframe
                 style={{ width: '100%', height: '100%', aspectRatio: '16/9', borderRadius: '10px' }}
