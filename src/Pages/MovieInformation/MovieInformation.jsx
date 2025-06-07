@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import useStyles from './MovieInformation.style.js'
-import { Typography, Button, Grid, Box, Rating } from '@mui/material';
-import { Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove } from '@mui/icons-material'
-import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Helmet } from "react-helmet";
+import { Language } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import StarIcon from '@mui/icons-material/Star';
+import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import { Box, Button, Grid, IconButton, Rating, Tooltip, Typography } from '@mui/material';
 import axios from 'axios';
-import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { ActorCard, CollapseLine, Loader, MovieList, TrailerCard } from './../../Components/index.js'
-import { NotFound } from './../../Pages/index.js'
-import moviePoster from './../../assests/movie-poster.png'
-import genreIcons from './../../assests/genres/index.js'
-import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
+import React, { useEffect, useState } from 'react';
+import { Helmet } from "react-helmet";
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
+import { ActorCard, CollapseLine, Loader, MovieList, TrailerCard } from './../../Components/index.js';
+import { NotFound } from './../../Pages/index.js';
+import genreIcons from './../../assests/genres/index.js';
+import moviePoster from './../../assests/movie-poster.png';
 import { userSelector } from './../../features/auth.js';
+import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
+import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
+import useStyles from './MovieInformation.style.js';
 
 export default function MovieInformation() {
     const classes = useStyles();
@@ -85,7 +89,7 @@ export default function MovieInformation() {
 
     return <>
         <Helmet>
-            <title>Film: {data?.title}</title>
+            <title>{data?.title} - Movie</title>
         </Helmet>
         <Grid container className={classes.containerSpaceAround} sx={{ padding: '20px' }} >
             <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
@@ -94,6 +98,18 @@ export default function MovieInformation() {
                     src={data?.poster_path ? `${process.env.REACT_APP_IMAGE_BASE_LINK}${data?.poster_path}` : moviePoster}
                     alt={data?.title}
                 />
+                <Box className={classes.posterButtons}>
+                    <Tooltip title='Add to Favorites'>
+                        <IconButton onClick={addToFavorites}>
+                            {isMovieFavorited ? <FavoriteIcon fontSize='medium' sx={{ color: 'red' }} /> : <FavoriteBorderIcon fontSize='medium' sx={{ color: 'white' }} />}
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Add to Watchlist'>
+                        <IconButton onClick={addToWatchlist}>
+                            {isMovieWatchlisted ? <StarIcon fontSize='medium' sx={{ color: 'yellow' }} /> : <StarOutlineIcon fontSize='medium' sx={{ color: 'white' }} />}
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Grid>
             <Grid item container direction='column' lg={7} > {/* Film Data Grid */}
                 <Typography variant='h3' align='center' gutterBottom>
@@ -143,18 +159,6 @@ export default function MovieInformation() {
                         href={`https://www.imdb.com/title/${data?.imdb_id}`}
                         endIcon={<Language />}
                     > IMDB </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={addToFavorites}
-                        endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}
-                    > {isMovieFavorited ? 'Unfavorite' : 'Favorite'} </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={addToWatchlist}
-                        endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
-                    > WatchList </Button>
                 </Grid>
             </Grid>
             <Grid item container gap={2} xs={12} pt={5}>

@@ -14,6 +14,7 @@ export default makeStyles((theme) => ({
     },
     posterContainer: {
         textAlign: 'center',
+        position: 'relative',
         [theme.breakpoints.down('lg')]: {
             display: 'flex !important',
             justifyContent: 'center !important',
@@ -34,6 +35,20 @@ export default makeStyles((theme) => ({
             width: '100%',
             height: '350px',
         },
+    },
+    posterButtons: {
+        position: 'absolute',
+        bottom: '5px',
+        right: '50%',
+        transform: 'translateX(50%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '15px',
+        zIndex: 1000,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        borderRadius: '25px',
+        padding: '2px 10px',
     },
     genresContainer: {
         margin: '10px 0 !important',
