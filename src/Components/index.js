@@ -9,4 +9,5 @@ export { default as Loader } from './Loader/Loader.jsx';
 export { default as Search } from './Search/Search.jsx';
 export { default as Pagination } from './Pagination/Pagination.jsx';
 export { default as RatedCards } from './RatedCards/RatedCards.jsx';
+export { default as ActorCard } from './ActorCard/ActorCard.jsx';
 export { default as FeaturedMovie } from './FeaturedMovie/FeaturedMovie.jsx';

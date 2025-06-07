@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
 import axios from 'axios';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { Loader, MovieList } from './../../Components/index.js'
+import { ActorCard, Loader, MovieList } from './../../Components/index.js'
 import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import genreIcons from './../../assests/genres/index.js'
@@ -133,27 +133,11 @@ export default function MovieInformation() {
                 <Typography style={{ marginBottom: '2rem' }}> {data?.overview} </Typography>
                 <Typography variant='h5' gutterBottom> Top Cast </Typography>
                 <Grid item container spacing={2}> {/* Cast Data Grid */}
-                    {data?.credits?.cast?.map((character, index) => (character?.profile_path && (
-                        <Grid
-                            key={character?.id}
-                            item
-                            xs={4} md={2}
-                            component={Link}
-                            to={`/actor/${character?.id}`}
-                            sx={{
-                                textDecoration: 'none',
-                                textAlign: 'center'
-                            }}
-                        >
-                            <img
-                                className={classes.castImage}
-                                src={`${process.env.REACT_APP_IMAGE_BASE_LINK}/${character?.profile_path}`}
-                                alt={character?.name}
-                            />
-                            <Typography color='textPrimary' sx={{ width: '100%' }}>{character?.name}</Typography>
-                            <Typography color='textSecondary'>{character?.character?.split('/')[0]}</Typography>
-                        </Grid>))
-                    ).slice(0, 6)}
+                    {data?.credits?.cast?.slice(0, 6).map((character) => (
+                        character?.profile_path && (
+                            <ActorCard character={character} key={character?.id} />
+                        )
+                    ))}
                 </Grid>
                 <Grid item container gap={1} sx={{ marginTop: '2rem', justifyContent: 'center' }}> {/* Buttons Grid */}
                     <Button
@@ -205,7 +189,6 @@ export default function MovieInformation() {
                     > WatchList </Button>
                 </Grid>
             </Grid>
-
 
             {/* Recommended Movies */}
             {recommendations?.total_results > 0 && <Box marginTop='5rem' width='100%'>
