@@ -2,22 +2,28 @@ import { Box, Collapse, Grid, IconButton, Tooltip, Typography } from '@mui/mater
 import React, { useState } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import useStyles from './CollapseLine.style.js';
 
-export default function CollapseLine({ title, children }) {
+export default function CollapseLine({ title, tooltipTitle, children }) {
+    const classes = useStyles();
     const [isActorCollapseOpen, setIsActorCollapseOpen] = useState(false);
     return (
-        <Grid item container>
-            <Box display='flex' alignItems='center' alignContent='center' gap={1}>
-                <Tooltip title={title}>
-                    <IconButton aria-label="expand row" size="small" onClick={() => setIsActorCollapseOpen(prev => !prev)}>
-                        {isActorCollapseOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        <Grid item container className={classes.container}>
+            <Box
+                className={classes.titleContainer}
+                onClick={() => setIsActorCollapseOpen(prev => !prev)}
+            >
+                <Tooltip title={tooltipTitle}>
+                    <IconButton aria-label="expand row" size="small">
+                        {isActorCollapseOpen ? <KeyboardArrowUpIcon className={classes.icons} /> : <KeyboardArrowDownIcon className={classes.icons} />}
                     </IconButton>
                 </Tooltip>
-                <Typography variant='h5' gutterBottom> {title} </Typography>
+                <Typography variant='h5'> {title} </Typography>
             </Box>
-
-            <Collapse in={isActorCollapseOpen} timeout="auto" >
-                {children}
+            <Collapse in={isActorCollapseOpen} timeout="auto" sx={{ width: '100%' }}>
+                <Box sx={{ width: '100%', padding: '0 0 15px 0' }}>
+                    {children}
+                </Box>
             </Collapse>
         </Grid>
     )
