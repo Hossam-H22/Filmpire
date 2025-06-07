@@ -111,7 +111,7 @@ export default function MovieInformation() {
                     </Tooltip>
                 </Box>
             </Grid>
-            <Grid item container direction='column' lg={7} > {/* Film Data Grid */}
+            <Grid item container direction='column' sx={{ marginY: 'auto' }} lg={7} > {/* Film Data Grid */}
                 <Typography variant='h3' align='center' gutterBottom>
                     {data?.title} ({data?.release_date?.split('-')[0]})
                 </Typography>
