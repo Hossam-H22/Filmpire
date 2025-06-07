@@ -13,7 +13,8 @@ export default function ActorCard({ character }) {
             to={`/actor/${character?.id}`}
             sx={{
                 textDecoration: 'none',
-                textAlign: 'center'
+                textAlign: 'center',
+                marginBottom: '10px',
             }}
         >
             <img
