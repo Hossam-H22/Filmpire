@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
 import axios from 'axios';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { ActorCard, Loader, MovieList } from './../../Components/index.js'
+import { ActorCard, CollapseLine, Loader, MovieList } from './../../Components/index.js'
 import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import genreIcons from './../../assests/genres/index.js'
@@ -81,8 +81,6 @@ export default function MovieInformation() {
         setIsMovieWatchlisted((prev) => !prev);
     }
 
-    console.log(data);
-
 
     if (isFetching) return <Loader size='8rem' />
 
@@ -131,14 +129,6 @@ export default function MovieInformation() {
                 </Grid>
                 <Typography variant='h5' gutterBottom style={{ marginTop: '10px' }}> Overview </Typography>
                 <Typography style={{ marginBottom: '2rem' }}> {data?.overview} </Typography>
-                <Typography variant='h5' gutterBottom> Top Cast </Typography>
-                <Grid item container spacing={2}> {/* Cast Data Grid */}
-                    {data?.credits?.cast?.slice(0, 6).map((character) => (
-                        character?.profile_path && (
-                            <ActorCard character={character} key={character?.id} />
-                        )
-                    ))}
-                </Grid>
                 <Grid item container gap={1} sx={{ marginTop: '2rem', justifyContent: 'center' }}> {/* Buttons Grid */}
                     <Button
                         size='small'
@@ -188,6 +178,17 @@ export default function MovieInformation() {
                         endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
                     > WatchList </Button>
                 </Grid>
+            </Grid>
+            <Grid item container gap={2} xs={12} pt={5}>
+                <CollapseLine title="Top Cast" > {/* Cast Data Grid */}
+                    <Grid item container px={1} sx={{ display: 'flex', width: '100%' }}>
+                        {data?.credits?.cast?.slice(0, 12).map((character) => (
+                            character?.profile_path && (
+                                <ActorCard character={character} key={character?.id} />
+                            )
+                        ))}
+                    </Grid>
+                </CollapseLine>
             </Grid>
 
             {/* Recommended Movies */}
