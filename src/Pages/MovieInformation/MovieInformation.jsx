@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import useStyles from './MovieInformation.style.js'
-import { Modal, Typography, Button, ButtonGroup, Grid, Box, Rating } from '@mui/material';
-import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, Close, Dns, } from '@mui/icons-material'
-import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Helmet } from "react-helmet";
+import { Language } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import StarIcon from '@mui/icons-material/Star';
+import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import { Box, Button, Grid, IconButton, Rating, Tooltip, Typography } from '@mui/material';
 import axios from 'axios';
-import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { Loader, MovieList } from './../../Components/index.js'
-import { NotFound } from './../../Pages/index.js'
-import moviePoster from './../../assests/movie-poster.png'
-import genreIcons from './../../assests/genres/index.js'
-import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
+import React, { useEffect, useState } from 'react';
+import { Helmet } from "react-helmet";
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
+import { ActorCard, CollapseLine, Loader, MovieList, TrailerCard } from './../../Components/index.js';
+import { NotFound } from './../../Pages/index.js';
+import genreIcons from './../../assests/genres/index.js';
+import moviePoster from './../../assests/movie-poster.png';
 import { userSelector } from './../../features/auth.js';
+import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
+import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
+import useStyles from './MovieInformation.style.js';
 
 export default function MovieInformation() {
     const classes = useStyles();
     const dispatch = useDispatch();
     const { user } = useSelector(userSelector);
-    const [open, setOpen] = useState(false);
-    const [isIframeLoading, setIsIframeLoading] = useState(false);
-    const [playMovie, setPlayMovie] = useState(false);
-    const [movieServer, setMovieServer] = useState(1);
+    const [isMovieLoading, setIsMovieLoading] = useState(true);
     const [isMovieFavorited, setIsMovieFavorited] = useState(false);
     const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
     const { id } = useParams();
@@ -81,8 +82,6 @@ export default function MovieInformation() {
         setIsMovieWatchlisted((prev) => !prev);
     }
 
-    console.log(data);
-
 
     if (isFetching) return <Loader size='8rem' />
 
@@ -90,7 +89,7 @@ export default function MovieInformation() {
 
     return <>
         <Helmet>
-            <title>Film: {data?.title}</title>
+            <title>{data?.title} - Movie</title>
         </Helmet>
         <Grid container className={classes.containerSpaceAround} sx={{ padding: '20px' }} >
             <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
@@ -99,8 +98,20 @@ export default function MovieInformation() {
                     src={data?.poster_path ? `${process.env.REACT_APP_IMAGE_BASE_LINK}${data?.poster_path}` : moviePoster}
                     alt={data?.title}
                 />
+                <Box className={classes.posterButtons}>
+                    <Tooltip title='Add to Favorites'>
+                        <IconButton onClick={addToFavorites}>
+                            {isMovieFavorited ? <FavoriteIcon fontSize='medium' sx={{ color: 'red' }} /> : <FavoriteBorderIcon fontSize='medium' sx={{ color: 'white' }} />}
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title='Add to Watchlist'>
+                        <IconButton onClick={addToWatchlist}>
+                            {isMovieWatchlisted ? <StarIcon fontSize='medium' sx={{ color: 'yellow' }} /> : <StarOutlineIcon fontSize='medium' sx={{ color: 'white' }} />}
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Grid>
-            <Grid item container direction='column' lg={7} > {/* Film Data Grid */}
+            <Grid item container direction='column' sx={{ marginY: 'auto' }} lg={7} > {/* Film Data Grid */}
                 <Typography variant='h3' align='center' gutterBottom>
                     {data?.title} ({data?.release_date?.split('-')[0]})
                 </Typography>
@@ -131,31 +142,7 @@ export default function MovieInformation() {
                 </Grid>
                 <Typography variant='h5' gutterBottom style={{ marginTop: '10px' }}> Overview </Typography>
                 <Typography style={{ marginBottom: '2rem' }}> {data?.overview} </Typography>
-                <Typography variant='h5' gutterBottom> Top Cast </Typography>
-                <Grid item container spacing={2}> {/* Cast Data Grid */}
-                    {data?.credits?.cast?.map((character, index) => (character?.profile_path && (
-                        <Grid
-                            key={character?.id}
-                            item
-                            xs={4} md={2}
-                            component={Link}
-                            to={`/actor/${character?.id}`}
-                            sx={{
-                                textDecoration: 'none',
-                                textAlign: 'center'
-                            }}
-                        >
-                            <img
-                                className={classes.castImage}
-                                src={`${process.env.REACT_APP_IMAGE_BASE_LINK}/${character?.profile_path}`}
-                                alt={character?.name}
-                            />
-                            <Typography color='textPrimary' sx={{ width: '100%' }}>{character?.name}</Typography>
-                            <Typography color='textSecondary'>{character?.character?.split('/')[0]}</Typography>
-                        </Grid>))
-                    ).slice(0, 6)}
-                </Grid>
-                <Grid item container gap={1} sx={{ marginTop: '2rem', justifyContent: 'center' }}> {/* Buttons Grid */}
+                <Grid item container gap={1} sx={{ justifyContent: 'center' }}> {/* Buttons Grid */}
                     <Button
                         size='small'
                         variant='outlined'
@@ -172,122 +159,50 @@ export default function MovieInformation() {
                         href={`https://www.imdb.com/title/${data?.imdb_id}`}
                         endIcon={<Language />}
                     > IMDB </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={() => setOpen(true)} // open trailer videoa
-                        href=''
-                        endIcon={<Theaters />}
-                        disabled={data?.videos?.results?.length === 0}
-                    > Trailer </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={() => {
-                            setPlayMovie(true);
-                            setMovieServer(1);
-                            setIsIframeLoading(true);
-                        }}
-                        endIcon={<MovieIcon />}
-                    > Watch Now
-                    </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={addToFavorites}
-                        endIcon={isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />}
-                    > {isMovieFavorited ? 'Unfavorite' : 'Favorite'} </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={addToWatchlist}
-                        endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
-                    > WatchList </Button>
                 </Grid>
             </Grid>
-
+            <Grid item container gap={2} xs={12} pt={5}>
+                <CollapseLine title="Top Cast" > {/* Cast Data Grid */}
+                    <Grid item container px={1} sx={{ display: 'flex', width: '100%' }}>
+                        {data?.credits?.cast?.slice(0, 12).map((character) => (
+                            character?.profile_path && (
+                                <ActorCard character={character} key={character?.id} />
+                            )
+                        ))}
+                    </Grid>
+                </CollapseLine>
+                <CollapseLine title="Trailers" >
+                    <Grid item container px={1} sx={{ display: 'flex', width: '100%' }}>
+                        {data?.videos?.results?.slice(0, 4).map((video) => (
+                            <TrailerCard video={video} key={video.id} />
+                        ))}
+                    </Grid>
+                </CollapseLine>
+                <CollapseLine title="Watch Now" >
+                    <Grid item container px={1} sx={{ display: 'flex', width: '100%', position: 'relative' }}>
+                        {isMovieLoading && <div className={classes.movieLoader} >
+                            <Loader size='4rem' removeMargin />
+                        </div>}
+                        <iframe
+                            autoPlay
+                            title='Movie'
+                            src={`https://vidsrc.xyz/embed/movie/${id}`}
+                            // src={`https://www.2embed.cc/embed/${id}`}
+                            allow='autoplay'
+                            allowFullScreen
+                            scrolling="no"
+                            onLoad={() => setIsMovieLoading(false)}
+                            style={{ backgroundColor: "black", width: '100%', height: '100%', aspectRatio: '16/9', borderRadius: '10px' }}
+                        />
+                    </Grid>
+                </CollapseLine>
+            </Grid>
 
             {/* Recommended Movies */}
             {recommendations?.total_results > 0 && <Box marginTop='5rem' width='100%'>
                 <Typography variant='h3' gutterBottom align='center'>You might also like</Typography>
                 <MovieList movies={recommendations} numberOfMovies={12} />
             </Box>}
-
-
-            {/* Modal Movie */}
-            {playMovie && <Modal
-                closeAfterTransition
-                className={classes.modal}
-                open={playMovie}
-                disableBackdropClick
-            >
-                <div className={classes.movieModelDiv} >
-                    <Grid item className={classes.buttonsContainer} style={{ justifyContent: 'space-between' }}>
-                        <ButtonGroup size='small' variant='contained' >
-                            <Button
-                                onClick={() => {
-                                    if (movieServer === 2) {
-                                        setMovieServer(1);
-                                        setIsIframeLoading(true);
-                                    }
-                                }}
-                                endIcon={<Dns />}
-                            > Server 1 </Button>
-                            <Button
-                                onClick={() => {
-                                    if (movieServer === 1) {
-                                        setMovieServer(2);
-                                        setIsIframeLoading(true);
-                                    }
-                                }}
-                                endIcon={<Dns />}
-                            > Server 2 </Button>
-                        </ButtonGroup>
-                        <ButtonGroup size='small' variant='contained' >
-                            <Button
-                                onClick={() => setPlayMovie(false)}
-                                endIcon={<Close />}
-                            > Close </Button>
-                        </ButtonGroup>
-                    </Grid>
-                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                        {isIframeLoading && <div className={classes.movieLoader} >
-                            <Loader size='4rem' />
-                        </div>}
-                        <iframe
-                            autoPlay
-                            frameBorder='0'
-                            title='Movie'
-                            src={movieServer === 1 ? `https://vidsrc.xyz/embed/movie/${id}` : `https://www.2embed.cc/embed/${id}`}
-                            allow='autoplay'
-                            allowFullScreen
-                            scrolling="no"
-                            width="100%"
-                            height="100%"
-                            onLoad={() => setIsIframeLoading(false)}
-                            style={{ backgroundColor: "black" }}
-                        />
-                    </div>
-                </div>
-            </Modal>}
-
-
-            {/* Modal Trailer Youtube Video */}
-            {data?.videos?.results?.length > 0 && <Modal
-                closeAfterTransition
-                className={classes.modal}
-                open={open}
-                onClose={() => setOpen(false)}
-            >
-                <iframe
-                    autoPlay
-                    className={classes.videos}
-                    frameBorder='0'
-                    title='Trailer'
-                    src={`https://www.youtube.com/embed/${data?.videos?.results[0]?.key}`}
-                    allow='autoplay'
-                />
-            </Modal>}
         </Grid>
     </>
 }

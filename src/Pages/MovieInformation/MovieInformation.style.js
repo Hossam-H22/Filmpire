@@ -14,6 +14,7 @@ export default makeStyles((theme) => ({
     },
     posterContainer: {
         textAlign: 'center',
+        position: 'relative',
         [theme.breakpoints.down('lg')]: {
             display: 'flex !important',
             justifyContent: 'center !important',
@@ -22,7 +23,7 @@ export default makeStyles((theme) => ({
     },
     poster: {
         borderRadius: '20px',
-        boxShadow: '0.5em 1em 1em #404046bf', // rgp(64, 64, 70)
+        boxShadow: '0.4em 0.5em 1em rgba(64, 64, 70, 0.57)', // rgp(64, 64, 70)
         width: '100%',
         [theme.breakpoints.down('lg')]: {
             margin: '0 auto',
@@ -34,6 +35,20 @@ export default makeStyles((theme) => ({
             width: '100%',
             height: '350px',
         },
+    },
+    posterButtons: {
+        position: 'absolute',
+        bottom: '5px',
+        right: '50%',
+        transform: 'translateX(50%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '15px',
+        zIndex: 1000,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        borderRadius: '25px',
+        padding: '2px 10px',
     },
     genresContainer: {
         margin: '10px 0 !important',
@@ -54,66 +69,10 @@ export default makeStyles((theme) => ({
         filter: theme.palette.mode === 'dark' && 'invert(1)',
         marginRight: '10px',
     },
-    castImage: {
-        width: '100%',
-        maxWidth: '7em',
-        height: '8em',
-        objectFit: 'cover',
-        borderRadius: '10px',
-    },
-    buttonsContainer: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        width: '100%',
-        [theme.breakpoints.down('xl')]: {
-            justifyContent: 'center',
-            flexDirection: 'column',
-        },
-        [theme.breakpoints.down('lg')]: {
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-        },
-        [theme.breakpoints.down('md')]: {
-            justifyContent: 'center',
-            flexDirection: 'column',
-        },
-    },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-    },
-    videos: {
-        width: '50%',
-        height: '50%',
-        [theme.breakpoints.down('sm')]: {
-            width: '90%',
-            height: '50%',
-        },
-    },
-    movieModelDiv: {
-        width: '60vw',
-        height: '60%',
-        position: 'relative',
-        [theme.breakpoints.down('md')]: {
-            width: '90%',
-            height: '50%',
-        },
-        [theme.breakpoints.down('sm')]: {
-            width: '90%',
-            height: '40%',
-        },
-    },
-    movieCloseBtn: {
-        position: 'absolute',
-        right: '10px',
-        top: '10px',
-    },
     movieLoader: {
         position: 'absolute',
-        right: '0px',
-        left: '0px',
-        top: '40%',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
     },
 }));
