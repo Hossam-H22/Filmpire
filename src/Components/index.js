@@ -12,3 +12,4 @@ export { default as RatedCards } from './RatedCards/RatedCards.jsx';
 export { default as ActorCard } from './ActorCard/ActorCard.jsx';
 export { default as FeaturedMovie } from './FeaturedMovie/FeaturedMovie.jsx';
 export { default as CollapseLine } from './CollapseLine/CollapseLine.jsx';
+export { default as TrailerCard } from './TrailerCard/TrailerCard.jsx';
