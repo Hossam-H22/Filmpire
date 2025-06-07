@@ -22,7 +22,7 @@ export default makeStyles((theme) => ({
     },
     poster: {
         borderRadius: '20px',
-        boxShadow: '0.5em 1em 1em #404046bf', // rgp(64, 64, 70)
+        boxShadow: '0.4em 0.5em 1em rgba(64, 64, 70, 0.57)', // rgp(64, 64, 70)
         width: '100%',
         [theme.breakpoints.down('lg')]: {
             margin: '0 auto',
