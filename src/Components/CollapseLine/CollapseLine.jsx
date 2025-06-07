@@ -4,7 +4,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import useStyles from './CollapseLine.style.js';
 
-export default function CollapseLine({ title, tooltipTitle, children }) {
+export default function CollapseLine({ title, tooltipTitle, unmountOnExit, children }) {
     const classes = useStyles();
     const [isActorCollapseOpen, setIsActorCollapseOpen] = useState(false);
     return (
@@ -20,7 +20,7 @@ export default function CollapseLine({ title, tooltipTitle, children }) {
                 </Tooltip>
                 <Typography variant='h5'> {title} </Typography>
             </Box>
-            <Collapse in={isActorCollapseOpen} timeout="auto" sx={{ width: '100%' }}>
+            <Collapse in={isActorCollapseOpen} timeout="auto" sx={{ width: '100%' }} unmountOnExit={unmountOnExit}>
                 <Box sx={{ width: '100%', padding: '0 0 15px 0' }}>
                     {children}
                 </Box>
