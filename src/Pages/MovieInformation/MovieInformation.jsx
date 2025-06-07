@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import useStyles from './MovieInformation.style.js'
 import { Modal, Typography, Button, ButtonGroup, Grid, Box, Rating } from '@mui/material';
-import { Movie as MovieIcon, Theaters, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, Close, Dns, } from '@mui/icons-material'
+import { Movie as MovieIcon, Language, PlusOne, Favorite, FavoriteBorderOutlined, Remove, Close, Dns, } from '@mui/icons-material'
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from "react-helmet";
 import axios from 'axios';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { ActorCard, CollapseLine, Loader, MovieList } from './../../Components/index.js'
+import { ActorCard, CollapseLine, Loader, MovieList, TrailerCard } from './../../Components/index.js'
 import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import genreIcons from './../../assests/genres/index.js'
@@ -18,7 +18,6 @@ export default function MovieInformation() {
     const classes = useStyles();
     const dispatch = useDispatch();
     const { user } = useSelector(userSelector);
-    const [open, setOpen] = useState(false);
     const [isIframeLoading, setIsIframeLoading] = useState(false);
     const [playMovie, setPlayMovie] = useState(false);
     const [movieServer, setMovieServer] = useState(1);
@@ -129,7 +128,7 @@ export default function MovieInformation() {
                 </Grid>
                 <Typography variant='h5' gutterBottom style={{ marginTop: '10px' }}> Overview </Typography>
                 <Typography style={{ marginBottom: '2rem' }}> {data?.overview} </Typography>
-                <Grid item container gap={1} sx={{ marginTop: '2rem', justifyContent: 'center' }}> {/* Buttons Grid */}
+                <Grid item container gap={1} sx={{ justifyContent: 'center' }}> {/* Buttons Grid */}
                     <Button
                         size='small'
                         variant='outlined'
@@ -146,14 +145,6 @@ export default function MovieInformation() {
                         href={`https://www.imdb.com/title/${data?.imdb_id}`}
                         endIcon={<Language />}
                     > IMDB </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        onClick={() => setOpen(true)} // open trailer videoa
-                        href=''
-                        endIcon={<Theaters />}
-                        disabled={data?.videos?.results?.length === 0}
-                    > Trailer </Button>
                     <Button
                         size='small'
                         variant='outlined'
@@ -186,6 +177,13 @@ export default function MovieInformation() {
                             character?.profile_path && (
                                 <ActorCard character={character} key={character?.id} />
                             )
+                        ))}
+                    </Grid>
+                </CollapseLine>
+                <CollapseLine title="Trailers" >
+                    <Grid item container px={1} sx={{ display: 'flex', width: '100%' }}>
+                        {data?.videos?.results?.slice(0, 4).map((video) => (
+                            <TrailerCard video={video} key={video.id} />
                         ))}
                     </Grid>
                 </CollapseLine>
@@ -255,23 +253,6 @@ export default function MovieInformation() {
                 </div>
             </Modal>}
 
-
-            {/* Modal Trailer Youtube Video */}
-            {data?.videos?.results?.length > 0 && <Modal
-                closeAfterTransition
-                className={classes.modal}
-                open={open}
-                onClose={() => setOpen(false)}
-            >
-                <iframe
-                    autoPlay
-                    className={classes.videos}
-                    frameBorder='0'
-                    title='Trailer'
-                    src={`https://www.youtube.com/embed/${data?.videos?.results[0]?.key}`}
-                    allow='autoplay'
-                />
-            </Modal>}
         </Grid>
     </>
 }
