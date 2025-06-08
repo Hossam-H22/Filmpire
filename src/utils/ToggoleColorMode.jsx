@@ -1,5 +1,5 @@
-import React, { createContext, useMemo, useState } from 'react'
 import { ThemeProvider, createTheme } from '@mui/material';
+import React, { createContext, useMemo, useState } from 'react';
 
 
 export const ColorModeContext = createContext();
@@ -19,11 +19,9 @@ export default function ToggoleColorMode({ children }) {
     }), [mode]);
 
 
-    return <>
-        <ColorModeContext.Provider value={{ mode, setMode, toggoleColorMode }} >
-            <ThemeProvider theme={theme}>
-                {children}
-            </ThemeProvider>
-        </ColorModeContext.Provider>
-    </>
+    return <ColorModeContext.Provider value={{ mode, setMode, toggoleColorMode }} >
+        <ThemeProvider theme={theme}>
+            {children}
+        </ThemeProvider>
+    </ColorModeContext.Provider>
 }

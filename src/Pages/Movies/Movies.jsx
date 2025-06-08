@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { FeaturedMovie, Loader, MovieList, Pagination } from './../../Components/index.js';
 import { useGetMoviesQuery } from './../../services/TMDB.js';
-import { FeaturedMovie, Loader, MovieList, Pagination } from './../../Components/index.js'
 
 
 export default function Movies() {
