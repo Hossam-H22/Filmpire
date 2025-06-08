@@ -1,9 +1,7 @@
-
-import { configureStore } from "@reduxjs/toolkit";
-import { tmdbApi } from "../services/TMDB.js";
-
-import genreOrCategoryReducer from './../features/currentGenreOrCategory.js'
-import  useReducer from "./../features/auth.js";
+import { configureStore } from '@reduxjs/toolkit';
+import useReducer from './../features/auth.js';
+import genreOrCategoryReducer from './../features/currentGenreOrCategory.js';
+import { tmdbApi } from './../services/TMDB.js';
 
 export default configureStore({
     reducer: {

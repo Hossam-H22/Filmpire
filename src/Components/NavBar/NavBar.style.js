@@ -1,7 +1,5 @@
-
-import { makeStyles } from "@mui/styles";
-
-const drawerWidth = 240;
+import { makeStyles } from '@mui/styles';
+import { DRAWER_WIDTH } from './../../utils/constants.js';
 
 export default makeStyles((theme) => ({
     toolbar: {
@@ -26,11 +24,11 @@ export default makeStyles((theme) => ({
     },
     drawer: {
         [theme.breakpoints.up('md')]: {
-            width: drawerWidth,
+            width: DRAWER_WIDTH,
             flexShrink: 0,
         },
     },
     drawerPaper: {
-        width: drawerWidth,
+        width: DRAWER_WIDTH,
     },
 }));

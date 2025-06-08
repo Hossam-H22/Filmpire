@@ -1,7 +1,7 @@
-import React from 'react'
-import useStyles from './RatedCards.style.js'
 import { Box, Typography } from '@mui/material';
-import { MovieList, Pagination } from './../index.js'
+import React from 'react';
+import { MovieList, Pagination } from './../index.js';
+import useStyles from './RatedCards.style.js';
 
 export default function RatedCards({ title, data, page, setPage }) {
     const classes = useStyles();

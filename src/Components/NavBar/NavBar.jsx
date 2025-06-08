@@ -1,27 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react'
-import useStyles from './NavBar.style.js'
-import { AppBar, IconButton, Toolbar, useMediaQuery, Drawer, Button, Avatar } from '@mui/material';
 import { AccountCircle, Menu } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles'
-import { Link } from 'react-router-dom';
-import { Search, Sidebar } from './../index.js'
-import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
+import { AppBar, Avatar, Button, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { setUser, userSelector } from '../../features/auth.js';
+import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
+import avater from './../../assests/avatar-profile.jpg';
+import { TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
 import { ColorModeContext } from './../../utils/ToggoleColorMode';
-import avater from './../../assests/avatar-profile.jpg'
+import { Search, Sidebar } from './../index.js';
+import useStyles from './NavBar.style.js';
 
 export default function NavBar() {
-    const [mobileOpen, setMobileOpen] = useState(false);
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const colorMode = useContext(ColorModeContext);
     const isMobile = useMediaQuery('(max-width: 900px)');
     const isMobileSmall = useMediaQuery('(max-width: 600px)');
-    const colorMode = useContext(ColorModeContext);
-    const theme = useTheme();
-    const dispatch = useDispatch();
     const { isAuthenticated, user } = useSelector(userSelector);
-
-
     const token = localStorage.getItem('request_token');
     const sessionIdFromLocalStorage = localStorage.getItem('session_id');
 
@@ -76,7 +73,7 @@ export default function NavBar() {
                             style={{ width: 30, height: 30 }}
                             alt='Profile'
                             src={user?.avater?.tmdb?.avatar_path ?
-                                `https://www.themoviedb.org/t/p/w64_and_h64_face/${user?.avater?.tmdb?.avatar_path}`
+                                `${TMDB_AVATAR_BASE_URL}/${user?.avater?.tmdb?.avatar_path}`
                                 : avater}
                         />
                     </Button>

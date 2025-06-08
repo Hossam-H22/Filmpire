@@ -1,7 +1,6 @@
+import { makeStyles } from '@mui/styles';
 
-import { makeStyles } from "@mui/styles";
-
-export default makeStyles((theme)=>({
+export default makeStyles((theme) => ({
     imageContainer: {
         display: 'flex',
         justifyContent: 'center',
@@ -24,6 +23,6 @@ export default makeStyles((theme)=>({
         alignItems: 'center',
     },
     link: {
-        color: theme.palette.mode === 'dark'? '#fff !important' : '#000 !important',
+        color: theme.palette.mode === 'dark' ? '#fff !important' : '#000 !important',
     },
 }));

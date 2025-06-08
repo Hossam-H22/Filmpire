@@ -1,12 +1,11 @@
-
-import './App.css';
 import { Box } from '@mui/material';
-import { Route, Routes } from 'react-router-dom';
-import { NavBar } from './Components/index.js'
 import { Helmet } from 'react-helmet';
-import NavigationScroll from './utils/NavigationScroll.jsx';
+import { Route, Routes } from 'react-router-dom';
+import './App.css';
 import useStyles from './App.styles.js';
-import { Layout, Movies, MovieInformation, Actors, Profile, NotFound } from './Pages/index.js';
+import { NavBar } from './Components/index.js';
+import { Actors, Layout, MovieInformation, Movies, NotFound, Profile } from './Pages/index.js';
+import NavigationScroll from './utils/NavigationScroll.jsx';
 
 function App() {
   const classes = useStyles();

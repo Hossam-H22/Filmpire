@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
-import { userSelector } from './../../features/auth.js';
-import { Box, Button, Typography } from '@mui/material';
 import { ExitToApp } from '@mui/icons-material';
-import { useGetListQuery } from './../../services/TMDB.js';
-import { Loader, RatedCards } from './../../Components/index.js'
+import { Box, Button, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useSelector } from 'react-redux';
+import { Loader, RatedCards } from './../../Components/index.js';
+import { userSelector } from './../../features/auth.js';
+import { useGetListQuery } from './../../services/TMDB.js';
 
 
 export default function Profile() {

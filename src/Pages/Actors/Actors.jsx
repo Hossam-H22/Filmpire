@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import useStyles from './Actors.style.js'
-import { Box, Button, Grid, Typography } from '@mui/material'
-import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
-import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from './../../services/TMDB.js';
-import { Loader, MovieList, Pagination } from './../../Components/index.js'
-import { NotFound } from './../../Pages/index.js'
-import moviePoster from './../../assests/movie-poster.png'
+import { Box, Button, Grid, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Loader, MovieList, Pagination } from './../../Components/index.js';
+import { NotFound } from './../../Pages/index.js';
+import moviePoster from './../../assests/movie-poster.png';
+import { useGetActorsDetailsQuery, useGetMoviesByActorIdQuery } from './../../services/TMDB.js';
+import { IMAGE_BASE_LINK } from './../../utils/constants.js';
+import useStyles from './Actors.style.js';
 
 export default function Actors() {
     const classes = useStyles();
@@ -15,7 +16,7 @@ export default function Actors() {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const { data, isFetching, error } = useGetActorsDetailsQuery(id);
-    const { data: movies } = useGetMoviesByActorIdQuery({id, page});
+    const { data: movies } = useGetMoviesByActorIdQuery({ id, page });
 
     if (isFetching) return <Loader size='8rem' />
     if (error) return <NotFound path={`/`} message='Something has gone wrong - Go back' />
@@ -28,7 +29,7 @@ export default function Actors() {
             <Grid item lg={5} xl={4} >
                 <img
                     className={classes.image}
-                    src={data?.profile_path ? `${process.env.REACT_APP_IMAGE_BASE_LINK}/${data?.profile_path}` : moviePoster}
+                    src={data?.profile_path ? `${IMAGE_BASE_LINK}/${data?.profile_path}` : moviePoster}
                     alt={data?.name}
                 />
             </Grid>

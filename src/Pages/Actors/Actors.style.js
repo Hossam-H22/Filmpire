@@ -1,7 +1,6 @@
-
 import { makeStyles } from "@mui/styles";
 
-export default makeStyles(()=>({
+export default makeStyles(() => ({
     image: {
         maxWidth: '90%',
         borderRadius: '20px',
