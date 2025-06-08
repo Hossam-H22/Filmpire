@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 
-export const useStyles = makeStyles((theme) => ({
+export default makeStyles((theme) => ({
     Loader: {
         position: 'absolute',
         left: '50%',

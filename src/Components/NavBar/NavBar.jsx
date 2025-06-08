@@ -1,6 +1,5 @@
 import { AccountCircle, Menu } from '@mui/icons-material';
 import { AppBar, Avatar, Button, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -12,16 +11,13 @@ import { Search, Sidebar } from './../index.js';
 import useStyles from './NavBar.style.js';
 
 export default function NavBar() {
-    const [mobileOpen, setMobileOpen] = useState(false);
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const colorMode = useContext(ColorModeContext);
     const isMobile = useMediaQuery('(max-width: 900px)');
     const isMobileSmall = useMediaQuery('(max-width: 600px)');
-    const colorMode = useContext(ColorModeContext);
-    const theme = useTheme();
-    const dispatch = useDispatch();
     const { isAuthenticated, user } = useSelector(userSelector);
-
-
     const token = localStorage.getItem('request_token');
     const sessionIdFromLocalStorage = localStorage.getItem('session_id');
 
