@@ -89,6 +89,36 @@ export default function MovieInformation() {
     return <>
         <Helmet>
             <title>{data?.title} | {SYSTEM_NAME}</title>
+            <meta name="description" content={data?.overview} />
+            <meta name="keywords" content={data?.genres?.map((genre) => genre?.name).join(', ')} />
+            <meta name="image" content={`${IMAGE_BASE_LINK}/${data?.poster_path}`} />
+            <meta property="og:title" content={data?.title} />
+            <meta property="og:description" content={data?.overview} />
+            <meta property="og:image" content={`${IMAGE_BASE_LINK}/${data?.poster_path}`} />
+            <meta property="og:url" content={window.location.href} />
+            <meta property="og:type" content="video.movie" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={data?.title} />
+            <meta name="twitter:description" content={data?.overview} />
+            <meta name="twitter:image" content={`${IMAGE_BASE_LINK}/${data?.poster_path}`} />
+            <link rel="canonical" href={window.location.href} />
+            <script type="application/ld+json">
+                {`
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Movie",
+                        "name": "${data.title}",
+                        "description": "${data.overview}",
+                        "image": "${IMAGE_BASE_LINK}/${data?.poster_path}",
+                        "datePublished": "${data.release_date}",
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": "${data.vote_average}",
+                            "ratingCount": "${data.vote_count}"
+                        }
+                    }
+            `}
+            </script>
         </Helmet>
         <Grid container className={classes.containerSpaceAround} sx={{ padding: '20px' }} >
             <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
