@@ -1,7 +1,7 @@
-import { Box, Collapse, Grid, IconButton, Tooltip, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Box, Collapse, Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import useStyles from './CollapseLine.style.js';
 
 export default function CollapseLine({ title, tooltipTitle, unmountOnExit, children }) {

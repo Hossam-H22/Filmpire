@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react'
-import useStyles from './Sidebar.style.js'
-import { Divider, List, ListItem, ListItemIcon, ListSubheader, ListItemText, IconButton } from '@mui/material'
-import { useTheme } from '@mui/styles';
-import { Link } from 'react-router-dom';
-import darkLogo from './../../assests/Dark_logo.png'
-import lightLogo from './../../assests/Light_logo.png'
-import { useGetGenresQuery } from '../../services/TMDB.js';
-import { Footer, Loader } from './../index.js'
-import genreIcons from './../../assests/genres/index.js'
-import { useDispatch, useSelector } from 'react-redux';
-import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
+import { Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import { useTheme } from '@mui/styles';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
+import { useGetGenresQuery } from '../../services/TMDB.js';
+import darkLogo from './../../assests/Dark_logo.png';
+import genreIcons from './../../assests/genres/index.js';
+import lightLogo from './../../assests/Light_logo.png';
+import { Footer, Loader } from './../index.js';
+import useStyles from './Sidebar.style.js';
 
 const categories = [
     { label: 'Popular', value: 'popular' },

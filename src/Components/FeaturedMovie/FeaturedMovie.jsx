@@ -1,7 +1,7 @@
-import React from 'react'
-import useStyles from './FeaturedMovie.style.js'
-import { Box, Typography, Card, CardContent, CardMedia } from '@mui/material'
+import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import useStyles from './FeaturedMovie.style.js';
 
 
 export default function FeaturedMovie({ movie }) {

@@ -1,7 +1,7 @@
-import { Badge, Grid } from '@mui/material'
-import React, { useState } from 'react'
-import Loader from '../Loader/Loader.jsx'
-import { useStyles } from './TrailerCard.style.js';
+import { Badge, Grid } from '@mui/material';
+import React, { useState } from 'react';
+import { Loader } from './../index.js';
+import useStyles from './TrailerCard.style.js';
 
 export default function TrailerCard({ video }) {
     const classes = useStyles();

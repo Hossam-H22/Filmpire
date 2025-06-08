@@ -1,9 +1,9 @@
-import React from 'react'
-import useStyles from './MovieCard.style.js'
-import { Typography, Grid, Tooltip, Rating } from '@mui/material'
+import { Grid, Rating, Tooltip, Typography } from '@mui/material';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import moviePoster from './../../assests/movie-poster.png'
+import moviePoster from './../../assests/movie-poster.png';
 import { IMAGE_BASE_LINK } from './../../utils/constants.js';
+import useStyles from './MovieCard.style.js';
 
 export default function MovieCard({ movie }) {
     const classes = useStyles();

@@ -1,11 +1,10 @@
-import { useContext, useEffect } from 'react'
 import alanBtn from '@alan-ai/alan-sdk-web';
+import { useContext, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { searchMovie, selectGenreOrCategory } from '../features/currentGenreOrCategory.js';
 import { ColorModeContext } from '../utils/ToggoleColorMode.jsx';
 import { fetchToken } from '../utils/index.js';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { selectGenreOrCategory, searchMovie } from '../features/currentGenreOrCategory.js';
-
 
 
 export default function useAlan() {
@@ -25,7 +24,7 @@ export default function useAlan() {
                         navigate('/');
                     }
                     else {
-                        const categoryName = genreOrCategory?.startsWith('top')? 'top_rated' : genreOrCategory; 
+                        const categoryName = genreOrCategory?.startsWith('top') ? 'top_rated' : genreOrCategory;
                         dispatch(selectGenreOrCategory(categoryName));
                         navigate('/');
                     }
@@ -36,7 +35,7 @@ export default function useAlan() {
                     navigate('/');
                 }
                 else if (command === 'changeMode') {
-                    (mode === 'light')? setMode('light') : setMode('dark');
+                    (mode === 'light') ? setMode('light') : setMode('dark');
                 }
                 else if (command === 'login') {
                     fetchToken();
@@ -45,7 +44,7 @@ export default function useAlan() {
                     localStorage.clear();
                     window.location.href = '/';
                 }
-                
+
             }
         });
 

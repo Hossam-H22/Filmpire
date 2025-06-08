@@ -1,8 +1,8 @@
-import { Grid, Typography } from '@mui/material'
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useStyles } from './ActorCard.style.js'
+import { Grid, Typography } from '@mui/material';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { IMAGE_BASE_LINK } from './../../utils/constants.js';
+import { useStyles } from './ActorCard.style.js';
 
 export default function ActorCard({ character }) {
     const classes = useStyles();

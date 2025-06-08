@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import useStyles from './Search.style.js'
-import { TextField, InputAdornment } from '@mui/material'
 import { Search as SearchIcon } from '@mui/icons-material'
+import { InputAdornment, TextField } from '@mui/material'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { searchMovie } from '../../features/currentGenreOrCategory.js'
+import useStyles from './Search.style.js'
 
 
 export default function Search() {

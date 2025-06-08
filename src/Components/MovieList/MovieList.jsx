@@ -1,5 +1,5 @@
-import React from 'react'
 import { Grid } from '@mui/material';
+import React from 'react';
 import MovieCard from './../MovieCard/MovieCard.jsx';
 
 export default function MovieList({ movies, numberOfMovies, excludeFirst }) {

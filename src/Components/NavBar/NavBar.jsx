@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
-import useStyles from './NavBar.style.js'
-import { AppBar, IconButton, Toolbar, useMediaQuery, Drawer, Button, Avatar } from '@mui/material';
 import { AccountCircle, Menu } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles'
-import { Link } from 'react-router-dom';
-import { Search, Sidebar } from './../index.js'
-import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
+import { AppBar, Avatar, Button, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { setUser, userSelector } from '../../features/auth.js';
+import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
+import avater from './../../assests/avatar-profile.jpg';
 import { ColorModeContext } from './../../utils/ToggoleColorMode';
-import avater from './../../assests/avatar-profile.jpg'
+import { Search, Sidebar } from './../index.js';
+import useStyles from './NavBar.style.js';
 
 export default function NavBar() {
     const [mobileOpen, setMobileOpen] = useState(false);

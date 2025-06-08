@@ -1,6 +1,6 @@
-import React from 'react'
-import useStyles from './Pagination.style.js'
 import { Button, Typography } from '@mui/material';
+import React from 'react';
+import useStyles from './Pagination.style.js';
 
 
 export default function Pagination({ curruntPage, setPage, totalPages }) {
