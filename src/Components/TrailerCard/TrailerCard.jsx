@@ -1,5 +1,6 @@
 import { Badge, Grid } from '@mui/material';
 import React, { useState } from 'react';
+import { YOUTUBE_EMBED_BASE_URL } from './../../utils/constants.js';
 import { Loader } from './../index.js';
 import useStyles from './TrailerCard.style.js';
 
@@ -15,7 +16,7 @@ export default function TrailerCard({ video }) {
             <iframe
                 style={{ width: '100%', height: '100%', aspectRatio: '16/9', borderRadius: '10px' }}
                 title={video.name}
-                src={`https://www.youtube.com/embed/${video.key}`}
+                src={`${YOUTUBE_EMBED_BASE_URL}/${video.key}`}
                 allow='autoplay'
                 onLoad={() => setIsLoading(false)}
             />

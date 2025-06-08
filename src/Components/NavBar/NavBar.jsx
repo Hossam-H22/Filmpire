@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { setUser, userSelector } from '../../features/auth.js';
 import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
 import avater from './../../assests/avatar-profile.jpg';
+import { TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
 import { ColorModeContext } from './../../utils/ToggoleColorMode';
 import { Search, Sidebar } from './../index.js';
 import useStyles from './NavBar.style.js';
@@ -72,7 +73,7 @@ export default function NavBar() {
                             style={{ width: 30, height: 30 }}
                             alt='Profile'
                             src={user?.avater?.tmdb?.avatar_path ?
-                                `https://www.themoviedb.org/t/p/w64_and_h64_face/${user?.avater?.tmdb?.avatar_path}`
+                                `${TMDB_AVATAR_BASE_URL}/${user?.avater?.tmdb?.avatar_path}`
                                 : avater}
                         />
                     </Button>

@@ -1,6 +1,7 @@
 import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { IMAGE_BACKDROP_BASE_LINK } from './../../utils/constants.js';
 import useStyles from './FeaturedMovie.style.js';
 
 
@@ -14,7 +15,7 @@ export default function FeaturedMovie({ movie }) {
             <CardMedia
                 media='picture'
                 alt={movie?.title}
-                image={`https://image.tmdb.org/t/p/original/${movie?.backdrop_path}`}
+                image={`${IMAGE_BACKDROP_BASE_LINK}/${movie?.backdrop_path}`}
                 title={movie?.title}
                 className={classes.cardMedia}
             />
