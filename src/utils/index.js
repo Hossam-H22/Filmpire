@@ -1,11 +1,12 @@
 
 
 import axios from "axios"
+import { API_BASE_URL, API_TMDB_KEY } from "./constants.js";
 
 export const moviesApi = axios.create({
-    baseURL: process.env.REACT_APP_API_BASE_URL,
+    baseURL: API_BASE_URL,
     params: {
-        api_key: process.env.REACT_APP_TMDB_KEY,
+        api_key: API_TMDB_KEY,
     },
 });
 

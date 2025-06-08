@@ -16,6 +16,7 @@ import moviePoster from './../../assests/movie-poster.png';
 import { userSelector } from './../../features/auth.js';
 import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
+import { API_BASE_URL, API_TMDB_KEY, IMAGE_BASE_LINK, MOVIE_BASE_URL1, SYSTEM_NAME } from './../../utils/constants.js';
 import useStyles from './MovieInformation.style.js';
 
 export default function MovieInformation() {
@@ -27,8 +28,6 @@ export default function MovieInformation() {
     const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
     const { id } = useParams();
 
-    const baseUrl = process.env.REACT_APP_API_BASE_URL;
-    const tmdbApiKey = process.env.REACT_APP_TMDB_KEY;
     const sessionId = localStorage.getItem('session_id');
     const { data, isFetching, error } = useGetMovieQuery(id);
     const { data: favoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: 1 });
@@ -65,7 +64,7 @@ export default function MovieInformation() {
 
 
     async function addToFavorites() {
-        await axios.post(`${baseUrl}/account/${user?.id}/favorite?api_key=${tmdbApiKey}&session_id=${sessionId}`, {
+        await axios.post(`${API_BASE_URL}/account/${user?.id}/favorite?api_key=${API_TMDB_KEY}&session_id=${sessionId}`, {
             media_type: 'movie',
             media_id: id,
             favorite: !isMovieFavorited,
@@ -74,7 +73,7 @@ export default function MovieInformation() {
     }
 
     async function addToWatchlist() {
-        await axios.post(`${baseUrl}/account/${user?.id}/watchlist?api_key=${tmdbApiKey}&session_id=${sessionId}`, {
+        await axios.post(`${API_BASE_URL}/account/${user?.id}/watchlist?api_key=${API_TMDB_KEY}&session_id=${sessionId}`, {
             media_type: 'movie',
             media_id: id,
             watchlist: !isMovieWatchlisted,
@@ -89,13 +88,13 @@ export default function MovieInformation() {
 
     return <>
         <Helmet>
-            <title>{data?.title} - Movie</title>
+            <title>{data?.title} | {SYSTEM_NAME}</title>
         </Helmet>
         <Grid container className={classes.containerSpaceAround} sx={{ padding: '20px' }} >
             <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
                 <img
                     className={classes.poster}
-                    src={data?.poster_path ? `${process.env.REACT_APP_IMAGE_BASE_LINK}${data?.poster_path}` : moviePoster}
+                    src={data?.poster_path ? `${IMAGE_BASE_LINK}/${data?.poster_path}` : moviePoster}
                     alt={data?.title}
                 />
                 <Box className={classes.posterButtons}>
@@ -186,8 +185,8 @@ export default function MovieInformation() {
                         <iframe
                             autoPlay
                             title='Movie'
-                            src={`https://vidsrc.xyz/embed/movie/${id}`}
-                            // src={`https://www.2embed.cc/embed/${id}`}
+                            src={`${MOVIE_BASE_URL1}/${id}`}
+                            // src={`${MOVIE_BASE_URL2}/${id}`}
                             allow='autoplay'
                             allowFullScreen
                             scrolling="no"

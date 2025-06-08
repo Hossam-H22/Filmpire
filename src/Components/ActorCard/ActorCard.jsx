@@ -2,6 +2,7 @@ import { Grid, Typography } from '@mui/material'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useStyles } from './ActorCard.style.js'
+import { IMAGE_BASE_LINK } from './../../utils/constants.js';
 
 export default function ActorCard({ character }) {
     const classes = useStyles();
@@ -19,7 +20,7 @@ export default function ActorCard({ character }) {
         >
             <img
                 className={classes.castImage}
-                src={`${process.env.REACT_APP_IMAGE_BASE_LINK}/${character?.profile_path}`}
+                src={`${IMAGE_BASE_LINK}/${character?.profile_path}`}
                 alt={character?.name}
             />
             <Typography color='textPrimary' sx={{ width: '100%' }}>{character?.name}</Typography>

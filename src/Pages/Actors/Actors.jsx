@@ -8,6 +8,7 @@ import { Loader, MovieList, Pagination } from './../../Components/index.js'
 import { NotFound } from './../../Pages/index.js'
 import moviePoster from './../../assests/movie-poster.png'
 import { Helmet } from 'react-helmet';
+import { IMAGE_BASE_LINK } from './../../utils/constants.js';
 
 export default function Actors() {
     const classes = useStyles();
@@ -28,7 +29,7 @@ export default function Actors() {
             <Grid item lg={5} xl={4} >
                 <img
                     className={classes.image}
-                    src={data?.profile_path ? `${process.env.REACT_APP_IMAGE_BASE_LINK}/${data?.profile_path}` : moviePoster}
+                    src={data?.profile_path ? `${IMAGE_BASE_LINK}/${data?.profile_path}` : moviePoster}
                     alt={data?.name}
                 />
             </Grid>
