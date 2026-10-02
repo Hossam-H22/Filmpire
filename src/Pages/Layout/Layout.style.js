@@ -1,8 +1,8 @@
 import { makeStyles } from '@mui/styles';
 
-export default makeStyles((theme) => ({
+export default makeStyles(() => ({
     content: {
-        paddingTop: '60px',
+        flex: 1,
         width: '100% !important',
     },
 }));

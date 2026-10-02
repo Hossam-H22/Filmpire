@@ -7,4 +7,10 @@ export const MOVIE_BASE_URL2 = process.env.REACT_APP_MOVIE_WATCH_BASE_URL_TWO;
 export const IMAGE_BACKDROP_BASE_LINK = process.env.REACT_APP_IMAGE_BACKDROP_BASE_LINK;
 export const TMDB_AVATAR_BASE_URL = process.env.REACT_APP_TMDB_AVATAR_BASE_URL;
 export const YOUTUBE_EMBED_BASE_URL = process.env.REACT_APP_YOUTUBE_EMBED_BASE_URL;
-export const DRAWER_WIDTH = 240;
+export const CATEGORIES = [
+    { label: 'Popular', value: 'popular' },
+    { label: 'Top Rated', value: 'top_rated' },
+    { label: 'Upcoming', value: 'upcoming' },
+];
+// TMDB never returns more than 500 pages for a list
+export const MAX_TMDB_PAGES = 500;

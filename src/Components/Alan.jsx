@@ -2,7 +2,7 @@ import alanBtn from '@alan-ai/alan-sdk-web';
 import { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { searchMovie, selectGenreOrCategory } from '../features/currentGenreOrCategory.js';
+import { selectGenreOrCategory } from '../features/currentGenreOrCategory.js';
 import { ColorModeContext } from '../utils/ToggoleColorMode.jsx';
 import { fetchToken } from '../utils/index.js';
 
@@ -31,8 +31,7 @@ export default function useAlan() {
                 }
                 else if (command === 'search') {
                     console.log(query);
-                    dispatch(searchMovie(query));
-                    navigate('/');
+                    navigate(query ? `/?s=${encodeURIComponent(query)}` : '/');
                 }
                 else if (command === 'changeMode') {
                     (mode === 'light') ? setMode('light') : setMode('dark');

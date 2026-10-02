@@ -1,40 +1,41 @@
-import { Language } from '@mui/icons-material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import StarIcon from '@mui/icons-material/Star';
-import StarOutlineIcon from '@mui/icons-material/StarOutline';
-import { Box, Button, Grid, IconButton, Rating, Tooltip, Typography } from '@mui/material';
+import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder, Language, PlayArrow, Star } from '@mui/icons-material';
+import { Alert, Box, Button, Chip, CircularProgress, Snackbar } from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { ActorCard, CollapseLine, Loader, MovieList, TrailerCard } from './../../Components/index.js';
+import { ActorCard, CollapseLine, Loader, MovieList, PageContainer, SectionHeader, TrailerCard } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
-import genreIcons from './../../assests/genres/index.js';
 import moviePoster from './../../assests/movie-poster.png';
 import { userSelector } from './../../features/auth.js';
 import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
 import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { API_BASE_URL, API_TMDB_KEY, IMAGE_BASE_LINK, MOVIE_BASE_URL1, SYSTEM_NAME } from './../../utils/constants.js';
+import { API_BASE_URL, API_TMDB_KEY, IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
+import { fetchToken } from './../../utils/index.js';
+import useWatchLink from './../../utils/useWatchLink.js';
 import useStyles from './MovieInformation.style.js';
 
 export default function MovieInformation() {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const { user } = useSelector(userSelector);
+    const { user, isAuthenticated } = useSelector(userSelector);
     const [isMovieLoading, setIsMovieLoading] = useState(true);
     const [isMovieFavorited, setIsMovieFavorited] = useState(false);
     const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
+    const [pendingList, setPendingList] = useState(null);
+    const [notice, setNotice] = useState(null);
     const { id } = useParams();
 
     const sessionId = localStorage.getItem('session_id');
     const { data, isFetching, error } = useGetMovieQuery(id);
-    const { data: favoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: 1 });
-    const { data: watchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1 });
+    const { data: favoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: 1 }, { skip: !isAuthenticated });
+    const { data: watchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1 }, { skip: !isAuthenticated });
     const { data: recommendations } = useGetRecommendationsQuery({ list: 'recommendations', movie_id: id });
+    const watchLink = useWatchLink(id, data?.release_date);
 
     function formatDate(inputDate) {
+        if (!inputDate) return '—';
         const months = [
             "Jan",
             "Feb",
@@ -50,7 +51,7 @@ export default function MovieInformation() {
             "Dec"
         ];
         const [year, month, day] = inputDate.split("-").map(Number);
-        const formattedDate = `${months[month - 1]} ${day} ${year}`;
+        const formattedDate = `${months[month - 1]} ${day}, ${year}`;
         return formattedDate;
     }
 
@@ -63,28 +64,70 @@ export default function MovieInformation() {
     }, [watchlistMovies, data]);
 
 
-    async function addToFavorites() {
-        await axios.post(`${API_BASE_URL}/account/${user?.id}/favorite?api_key=${API_TMDB_KEY}&session_id=${sessionId}`, {
-            media_type: 'movie',
-            media_id: id,
-            favorite: !isMovieFavorited,
-        }).catch((error) => console.log(error));
-        setIsMovieFavorited((prev) => !prev);
+    function formatMoney(amount) {
+        if (!amount) return '—';
+        return amount >= 1e9 ? `$${(amount / 1e9).toFixed(2)}B` : `$${(amount / 1e6).toFixed(1)}M`;
     }
 
-    async function addToWatchlist() {
-        await axios.post(`${API_BASE_URL}/account/${user?.id}/watchlist?api_key=${API_TMDB_KEY}&session_id=${sessionId}`, {
-            media_type: 'movie',
-            media_id: id,
-            watchlist: !isMovieWatchlisted,
-        }).catch((error) => console.log(error));
-        setIsMovieWatchlisted((prev) => !prev);
+    function formatRuntime(minutes) {
+        if (!minutes) return null;
+        return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
     }
+
+    // listName is 'favorite' or 'watchlist'; the button only changes once TMDB confirms the update
+    async function updateList(listName, isInList, setIsInList) {
+        if (!isAuthenticated || !sessionId) {
+            setNotice({ severity: 'info', message: 'Please log in to save movies.', needsLogin: true });
+            return;
+        }
+
+        setPendingList(listName);
+        try {
+            const { data: response } = await axios.post(`${API_BASE_URL}/account/${user?.id}/${listName}?api_key=${API_TMDB_KEY}&session_id=${sessionId}`, {
+                media_type: 'movie',
+                media_id: Number(id),
+                [listName]: !isInList,
+            });
+            if (!response?.success) throw new Error(response?.status_message);
+            setIsInList(!isInList);
+        } catch (error) {
+            const isAuthError = error?.response?.status === 401;
+            setNotice({
+                severity: 'error',
+                message: isAuthError
+                    ? 'Your TMDB login has expired. Log in again to save movies.'
+                    : error?.response?.data?.status_message ?? error?.message ?? `Could not update your ${listName}. Try again.`,
+                needsLogin: isAuthError,
+            });
+        } finally {
+            setPendingList(null);
+        }
+    }
+
+    const addToFavorites = () => updateList('favorite', isMovieFavorited, setIsMovieFavorited);
+    const addToWatchlist = () => updateList('watchlist', isMovieWatchlisted, setIsMovieWatchlisted);
 
 
     if (isFetching) return <Loader size='8rem' />
 
     if (error) return <NotFound message='Something has gone wrong - Go back' path='/' />
+
+    const year = data?.release_date?.split('-')[0];
+    const director = data?.credits?.crew?.find((member) => member?.job === 'Director')?.name;
+    const cast = data?.credits?.cast?.slice(0, 15).filter((character) => character?.profile_path);
+    const trailers = data?.videos?.results?.slice(0, 4);
+    const facts = [
+        { label: 'Released', value: formatDate(data?.release_date) },
+        { label: 'Runtime', value: data?.runtime ? `${data.runtime} min` : '—' },
+        { label: 'Budget', value: formatMoney(data?.budget) },
+        { label: 'Revenue', value: formatMoney(data?.revenue) },
+        { label: 'Director', value: director ?? '—' },
+        { label: 'Status', value: data?.status ?? '—' },
+    ];
+
+    function scrollToTrailers() {
+        document.getElementById('trailers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     return <>
         <Helmet>
@@ -120,118 +163,170 @@ export default function MovieInformation() {
             `}
             </script>
         </Helmet>
-        <Grid container className={classes.containerSpaceAround} sx={{ padding: '20px' }} >
-            <Grid item sm={12} lg={4} className={classes.posterContainer}> {/* Image Grid */}
+        <Box component='section' className={classes.hero}>
+            {data?.backdrop_path && <div
+                className={classes.backdrop}
+                style={{ backgroundImage: `url(${IMAGE_BACKDROP_BASE_LINK}/${data?.backdrop_path})` }}
+            />}
+            <div className={classes.fade} />
+            <PageContainer className={classes.heroContent}>
                 <img
                     className={classes.poster}
                     src={data?.poster_path ? `${IMAGE_BASE_LINK}/${data?.poster_path}` : moviePoster}
                     alt={data?.title}
                 />
-                <Box className={classes.posterButtons}>
-                    <Tooltip title='Add to Favorites'>
-                        <IconButton onClick={addToFavorites}>
-                            {isMovieFavorited ? <FavoriteIcon fontSize='medium' sx={{ color: 'red' }} /> : <FavoriteBorderIcon fontSize='medium' sx={{ color: 'white' }} />}
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title='Add to Watchlist'>
-                        <IconButton onClick={addToWatchlist}>
-                            {isMovieWatchlisted ? <StarIcon fontSize='medium' sx={{ color: 'yellow' }} /> : <StarOutlineIcon fontSize='medium' sx={{ color: 'white' }} />}
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            </Grid>
-            <Grid item container direction='column' sx={{ marginY: 'auto' }} lg={7} > {/* Film Data Grid */}
-                <Typography variant='h3' align='center' gutterBottom>
-                    {data?.title} ({data?.release_date?.split('-')[0]})
-                </Typography>
-                <Typography variant='h5' align='center' gutterBottom>
-                    {data?.tagline}
-                </Typography>
-                <Grid item className={classes.containerSpaceAround}> {/* Rating & Languages Grid */}
-                    <Box display='flex' align='center' >
-                        <Rating readOnly value={data?.vote_average / 2} precision={0.1} />
-                        <Typography variant='subtitle1' gutterBottom style={{ marginLeft: '10px' }}>{data?.vote_average} / 10</Typography>
-                    </Box>
-                    <Typography variant='h6' align='center' gutterBottom>
-                        {data?.runtime}min / {formatDate(data?.release_date)} {data?.spoken_languages?.length > 0 ? ` / ${data?.spoken_languages[0]?.name}` : ''}
-                    </Typography>
-                </Grid>
-                <Grid item className={classes.genresContainer}> {/* Genres Grid */}
-                    {data?.genres?.map((genre, index) => (
-                        <Link
-                            key={index}
-                            className={classes.links}
-                            to={`/`}
-                            onClick={() => dispatch(selectGenreOrCategory(genre?.id))}
+                <div className={classes.info}>
+                    <div className={classes.eyebrow}>{data?.genres?.map((genre) => genre?.name).slice(0, 3).join(' · ')}</div>
+                    <h1 className={classes.title}>{data?.title}</h1>
+                    {data?.tagline && <p className={classes.tagline}>{data?.tagline}</p>}
+                    <div className={classes.meta}>
+                        <span className={classes.score}><Star className={classes.star} />{data?.vote_average?.toFixed(1)} / 10</span>
+                        {year && <><span className={classes.dot} /><span>{year}</span></>}
+                        {formatRuntime(data?.runtime) && <><span className={classes.dot} /><span className={classes.mono}>{formatRuntime(data?.runtime)}</span></>}
+                        {data?.spoken_languages?.length > 0 && <><span className={classes.dot} /><span>{data?.spoken_languages[0]?.english_name ?? data?.spoken_languages[0]?.name}</span></>}
+                    </div>
+                    <div className={classes.genres}>
+                        {data?.genres?.map((genre) => (
+                            <Chip
+                                key={genre?.id}
+                                label={genre?.name}
+                                component={Link}
+                                to='/'
+                                clickable
+                                variant='outlined'
+                                className={classes.genreChip}
+                                onClick={() => dispatch(selectGenreOrCategory(genre?.id))}
+                            />
+                        ))}
+                    </div>
+                    <div className={classes.actions}>
+                        {trailers?.length > 0 && <Button variant='contained' startIcon={<PlayArrow />} onClick={scrollToTrailers}>Trailer</Button>}
+                        <Button
+                            className={`${classes.ghost} ${isMovieFavorited ? classes.ghostOn : ''}`}
+                            startIcon={isMovieFavorited ? <Favorite /> : <FavoriteBorder />}
+                            onClick={addToFavorites}
+                            disabled={pendingList === 'favorite'}
                         >
-                            <img src={genreIcons[genre?.name?.toLowerCase()]} alt="icon" className={classes.genereImage} height={30} />
-                            <Typography color='textPrimary' variant='subtitle1'>{genre?.name}</Typography>
-                        </Link>
-                    ))}
-                </Grid>
-                <Typography variant='h5' gutterBottom style={{ marginTop: '10px' }}> Overview </Typography>
-                <Typography style={{ marginBottom: '2rem' }}> {data?.overview} </Typography>
-                <Grid item container gap={1} sx={{ justifyContent: 'center' }}> {/* Buttons Grid */}
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        href={data?.homepage ? data?.homepage : '#'}
-                        endIcon={<Language />}
-                    > Website </Button>
-                    <Button
-                        size='small'
-                        variant='outlined'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        href={`https://www.imdb.com/title/${data?.imdb_id}`}
-                        endIcon={<Language />}
-                    > IMDB </Button>
-                </Grid>
-            </Grid>
-            <Grid item container gap={2} xs={12} pt={5}>
-                <CollapseLine title="Top Cast" > {/* Cast Data Grid */}
-                    <Grid item container px={1} sx={{ display: 'flex', width: '100%' }}>
-                        {data?.credits?.cast?.slice(0, 12).map((character) => (
-                            character?.profile_path && (
-                                <ActorCard character={character} key={character?.id} />
-                            )
-                        ))}
-                    </Grid>
-                </CollapseLine>
-                <CollapseLine title="Trailers" >
-                    <Grid item container px={1} sx={{ display: 'flex', width: '100%' }}>
-                        {data?.videos?.results?.slice(0, 4).map((video) => (
-                            <TrailerCard video={video} key={video.id} />
-                        ))}
-                    </Grid>
-                </CollapseLine>
-                <CollapseLine title="Watch Now" >
-                    <Grid item container px={1} sx={{ display: 'flex', width: '100%', position: 'relative' }}>
-                        {isMovieLoading && <div className={classes.movieLoader} >
-                            <Loader size='4rem' removeMargin />
-                        </div>}
-                        <iframe
-                            autoPlay
-                            title='Movie'
-                            src={`${MOVIE_BASE_URL1}/${id}`}
-                            // src={`${MOVIE_BASE_URL2}/${id}`}
-                            allow='autoplay'
-                            allowFullScreen
-                            scrolling="no"
-                            onLoad={() => setIsMovieLoading(false)}
-                            style={{ backgroundColor: "black", width: '100%', height: '100%', aspectRatio: '16/9', borderRadius: '10px' }}
-                        />
-                    </Grid>
-                </CollapseLine>
-            </Grid>
+                            {isMovieFavorited ? 'Favorited' : 'Favorite'}
+                        </Button>
+                        <Button
+                            className={`${classes.ghost} ${isMovieWatchlisted ? classes.ghostOn : ''}`}
+                            startIcon={isMovieWatchlisted ? <Bookmark /> : <BookmarkBorder />}
+                            onClick={addToWatchlist}
+                            disabled={pendingList === 'watchlist'}
+                        >
+                            {isMovieWatchlisted ? 'In watchlist' : 'Watchlist'}
+                        </Button>
+                        <Button
+                            className={classes.ghost}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            href={`https://www.imdb.com/title/${data?.imdb_id}`}
+                            endIcon={<Language />}
+                        >IMDb</Button>
+                        {data?.homepage && <Button
+                            className={classes.ghost}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            href={data?.homepage}
+                            endIcon={<Language />}
+                        >Website</Button>}
+                    </div>
+                </div>
+            </PageContainer>
+        </Box>
 
-            {/* Recommended Movies */}
-            {recommendations?.total_results > 0 && <Box marginTop='5rem' width='100%'>
-                <Typography variant='h3' gutterBottom align='center'>You might also like</Typography>
-                <MovieList movies={recommendations} numberOfMovies={12} />
-            </Box>}
-        </Grid>
+        <PageContainer>
+            <div className={classes.twoCol}>
+                <div className={classes.main}>
+                    <section>
+                        <SectionHeader title='Overview' />
+                        <p className={classes.prose}>{data?.overview}</p>
+                    </section>
+                    {cast?.length > 0 && <section>
+                        <SectionHeader title='Top cast' />
+                        <div className={classes.cast}>
+                            {cast.map((character) => (
+                                <ActorCard character={character} key={character?.credit_id ?? character?.id} />
+                            ))}
+                        </div>
+                    </section>}
+                    {trailers?.length > 0 && <section id='trailers' className={classes.anchor}>
+                        <SectionHeader title='Trailers' />
+                        <div className={classes.trailers}>
+                            {trailers.map((video) => (
+                                <TrailerCard video={video} key={video.id} />
+                            ))}
+                        </div>
+                    </section>}
+                    <CollapseLine
+                        title='Watch now'
+                        unmountOnExit
+                        disabled={watchLink.status !== 'available'}
+                        badge={watchLink.status === 'checking' ? (
+                            <Chip size='small' variant='outlined' label='Checking availability…' icon={<CircularProgress size={12} color='inherit' />} />
+                        ) : watchLink.status === 'unavailable' && (
+                            <Chip size='small' color='warning' variant='outlined' label='Watching movie not available right now' />
+                        )}
+                    >
+                        <Box sx={{ position: 'relative' }}>
+                            {isMovieLoading && <div className={classes.movieLoader} >
+                                <Loader size='4rem' removeMargin />
+                            </div>}
+                            <iframe
+                                autoPlay
+                                title='Movie'
+                                src={watchLink.url}
+                                allow='autoplay'
+                                allowFullScreen
+                                scrolling="no"
+                                onLoad={() => setIsMovieLoading(false)}
+                                className={classes.player}
+                            />
+                        </Box>
+                    </CollapseLine>
+                </div>
+
+                <aside className={classes.aside}>
+                    <div className={classes.sideCard}>
+                        <span className={classes.sideLabel}>TMDB rating</span>
+                        <div className={classes.rateBar}>
+                            <span className={classes.rateNumber}>{data?.vote_average?.toFixed(1)}</span>
+                            <div className={classes.track}><span style={{ width: `${(data?.vote_average ?? 0) * 10}%` }} /></div>
+                        </div>
+                        <span className={classes.mono}>{data?.vote_count?.toLocaleString()} votes</span>
+                    </div>
+                    <dl className={classes.facts}>
+                        {facts.map(({ label, value }) => (
+                            <div key={label}>
+                                <dt>{label}</dt>
+                                <dd>{value}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                </aside>
+            </div>
+
+            {recommendations?.total_results > 0 && <section className={classes.recommendations}>
+                <SectionHeader title='More like this' />
+                <MovieList movies={recommendations} numberOfMovies={12} variant='rail' />
+            </section>}
+        </PageContainer>
+
+        <Snackbar
+            open={Boolean(notice)}
+            autoHideDuration={6000}
+            onClose={(e, reason) => reason !== 'clickaway' && setNotice(null)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+            {notice ? <Alert
+                severity={notice.severity}
+                variant='filled'
+                onClose={() => setNotice(null)}
+                action={notice.needsLogin && <Button color='inherit' size='small' onClick={fetchToken}>Log in</Button>}
+            >
+                {notice.message}
+            </Alert> : <span />}
+        </Snackbar>
     </>
 }

@@ -1,4 +1,4 @@
-import { Grid, Rating, Tooltip, Typography } from '@mui/material';
+import { Star } from '@mui/icons-material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import moviePoster from './../../assests/movie-poster.png';
@@ -7,17 +7,21 @@ import useStyles from './MovieCard.style.js';
 
 export default function MovieCard({ movie }) {
     const classes = useStyles();
+    const year = movie?.release_date?.split('-')[0];
 
-    return <Grid item xs={12} sm={6} md={4} lg={3} xl={2} sx={{ padding: '0 10px', marginBottom: '20px' }} >
-        <Link className={classes.links} to={`/movie/${movie?.id}`} >
-            <img alt={movie?.title} className={classes.image}
+    return <Link className={classes.card} to={`/movie/${movie?.id}`} >
+        <div className={classes.poster}>
+            <img alt={movie?.title} className={classes.image} loading='lazy'
                 src={movie?.poster_path ? `${IMAGE_BASE_LINK}${movie?.poster_path}` : moviePoster} />
-            <Typography className={classes.title} variant='h5'>{movie?.title}</Typography>
-            <Tooltip disableTouchListener title={`${movie?.vote_average} / 10`}>
-                <div>
-                    <Rating readOnly value={movie?.vote_average / 2} precision={0.1} />
-                </div>
-            </Tooltip>
-        </Link>
-    </Grid>
+            {movie?.vote_count > 0 && <span className={classes.badge}>
+                <Star className={classes.star} />{movie?.vote_average?.toFixed(1)}
+            </span>}
+            <div className={classes.overlay}>
+                <p className={classes.overview}>{movie?.overview}</p>
+                <span className={classes.more}>View details →</span>
+            </div>
+        </div>
+        <h3 className={classes.title}>{movie?.title}</h3>
+        {year && <span className={classes.sub}>{year}</span>}
+    </Link>
 }

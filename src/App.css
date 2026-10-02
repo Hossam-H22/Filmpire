@@ -1,19 +1,31 @@
-
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #cfcfcf;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a5a5a5;
+  background: rgba(157, 153, 173, 0.35);
+  border-radius: 8px;
 }
 
-
-* { 
+* {
   text-decoration: none;
   margin: 0;
   padding: 0;
+}
+
+:focus-visible {
+  outline: 2px solid #ff3b5c;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
