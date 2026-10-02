@@ -19,6 +19,7 @@ export default function TrailerCard({ video }) {
                     src={`${YOUTUBE_EMBED_BASE_URL}/${video.key}`}
                     allow='autoplay'
                     allowFullScreen
+                    loading='lazy'
                     onLoad={() => setIsLoading(false)}
                 />
             </div>

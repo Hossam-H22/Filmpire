@@ -108,8 +108,11 @@ export default makeStyles((theme) => ({
     },
     trailers: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+        gridAutoFlow: 'column',
+        gridAutoColumns: 'min(320px, 85%)',
         gap: 16,
+        overflowX: 'auto',
+        paddingBottom: 8,
     },
     player: {
         display: 'block',
