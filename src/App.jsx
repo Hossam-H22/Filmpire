@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import useStyles from './App.styles.js';
-import { NavBar } from './Components/index.js';
+import { Footer, NavBar } from './Components/index.js';
 import { Actors, Layout, MovieInformation, Movies, NotFound, Profile } from './Pages/index.js';
 import NavigationScroll from './utils/NavigationScroll.jsx';
 
@@ -27,6 +27,7 @@ function App() {
           </Routes>
         </Layout>
       </NavigationScroll>
+      <Footer />
     </Box>
   </>;
 }

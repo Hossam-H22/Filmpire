@@ -1,5 +1,5 @@
 import { Search as SearchIcon } from '@mui/icons-material'
-import { InputAdornment, TextField } from '@mui/material'
+import { InputBase } from '@mui/material'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -7,36 +7,30 @@ import { searchMovie } from '../../features/currentGenreOrCategory.js'
 import useStyles from './Search.style.js'
 
 
-export default function Search() {
+export default function Search({ fullWidth, onSearch }) {
     const classes = useStyles();
 
     const [query, setQuery] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    function handleKeyPress(e) {
+    function handleKeyDown(e) {
         if (e.key === 'Enter') {
             dispatch(searchMovie(query));
             navigate('/');
+            onSearch?.();
         }
     }
 
-    // if(location.pathname !== '/') return null
-
-    return <div className={classes.searchContainer}>
-        <TextField
-            onKeyPress={handleKeyPress}
+    return <label className={`${classes.searchContainer} ${fullWidth ? classes.fullWidth : ''}`}>
+        <SearchIcon className={classes.icon} />
+        <InputBase
+            onKeyDown={handleKeyDown}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            variant='standard'
-            InputProps={{
-                className: classes.input,
-                startAdornment: (
-                    <InputAdornment position='start' >
-                        <SearchIcon />
-                    </InputAdornment>
-                ),
-            }}
+            placeholder='Search movies…'
+            className={classes.input}
+            inputProps={{ 'aria-label': 'Search movies' }}
         />
-    </div>
+    </label>
 }

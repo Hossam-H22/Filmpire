@@ -6,6 +6,6 @@ export default function Loader({ size, removeMargin }) {
     const theme = useTheme();
 
     return <Box display='flex' justifyContent='center' mt={removeMargin ? 0 : 2} >
-        <CircularProgress size={size ?? '2rem'} sx={{ color: theme.palette.mode === 'dark' ? '#fff' : theme.palette.primary }} />
+        <CircularProgress size={size ?? '2rem'} sx={{ color: theme.palette.primary.main }} />
     </Box>
 }

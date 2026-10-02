@@ -1,4 +1,3 @@
-import { Badge, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import { YOUTUBE_EMBED_BASE_URL } from './../../utils/constants.js';
 import { Loader } from './../index.js';
@@ -9,31 +8,26 @@ export default function TrailerCard({ video }) {
     const [isLoading, setIsLoading] = useState(true);
 
     return (
-        <Grid item xs={12} sm={6} lg={3} p={1} sx={{ position: 'relative' }}>
-            {isLoading && <div className={classes.Loader} >
-                <Loader size='3rem' removeMargin />
-            </div>}
-            <iframe
-                style={{ width: '100%', height: '100%', aspectRatio: '16/9', borderRadius: '10px' }}
-                title={video.name}
-                src={`${YOUTUBE_EMBED_BASE_URL}/${video.key}`}
-                allow='autoplay'
-                onLoad={() => setIsLoading(false)}
-            />
-            <Badge
-                badgeContent={video.official ? 'Official' : 'Unofficial'}
-                color={video.official ? 'success' : 'warning'}
-                sx={{
-                    position: 'absolute',
-                    bottom: 20,
-                    right: 40,
-                    '& .MuiBadge-badge': {
-                        padding: '5px',
-                        borderRadius: '5px',
-                        fontSize: '0.75rem'
-                    }
-                }}
-            />
-        </Grid>
+        <figure className={classes.card}>
+            <div className={classes.frame}>
+                {isLoading && <div className={classes.Loader} >
+                    <Loader size='3rem' removeMargin />
+                </div>}
+                <iframe
+                    className={classes.iframe}
+                    title={video.name}
+                    src={`${YOUTUBE_EMBED_BASE_URL}/${video.key}`}
+                    allow='autoplay'
+                    allowFullScreen
+                    onLoad={() => setIsLoading(false)}
+                />
+            </div>
+            <figcaption className={classes.caption}>
+                <span className={classes.name}>{video.name}</span>
+                <span className={`${classes.tag} ${video.official ? classes.official : ''}`}>
+                    {video.official ? 'Official' : 'Unofficial'}
+                </span>
+            </figcaption>
+        </figure>
     )
 }

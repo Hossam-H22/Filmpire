@@ -5,6 +5,7 @@ export default makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
         display: 'flex',
+        flexDirection: 'column',
         minHeight: '100vh',
     },
 }));
