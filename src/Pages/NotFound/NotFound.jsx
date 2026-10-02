@@ -17,7 +17,7 @@ export default function NotFound({ path, message }) {
         if (window.location.href.includes('approved')) {
             navigate('/');
         }
-    }, []);
+    }, [navigate]);
 
 
     return <>
