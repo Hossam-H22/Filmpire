@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MOVIE_BASE_URL1, MOVIE_BASE_URL2 } from './constants.js';
+import { MOVIE_WATCH_SERVERS } from './constants.js';
 
 const PROBE_TIMEOUT_MS = 8000;
 
@@ -24,33 +24,47 @@ async function isLinkReachable(url) {
     }
 }
 
-// Finds the first configured watch link that responds for this movie.
-// status: 'checking' | 'available' | 'unavailable'
+// Tab label from the server host, e.g. https://vidsrc.xyz/embed/movie -> "vidsrc"
+function getServerName(baseUrl, index) {
+    try {
+        return new URL(baseUrl).hostname.replace(/^www\./, '').split('.')[0];
+    } catch (error) {
+        return `Server ${index + 1}`;
+    }
+}
+
+// Checks every configured watch server for this movie in parallel.
+// status: 'checking' (none working yet, some still pending) | 'available' | 'unavailable'
+// servers: the working servers, in .env order: [{ name, url }]
 export default function useWatchLink(movieId, releaseDate) {
-    const [result, setResult] = useState({ status: 'checking', url: null });
+    const [result, setResult] = useState({ status: 'checking', servers: [] });
 
     useEffect(() => {
         let isCancelled = false;
         const isUnreleased = releaseDate && new Date(releaseDate) > new Date();
-        const candidates = [MOVIE_BASE_URL1, MOVIE_BASE_URL2]
-            .filter(Boolean)
-            .map((baseUrl) => `${baseUrl}/${movieId}`);
+        const candidates = MOVIE_WATCH_SERVERS.map((baseUrl, index) => ({
+            name: getServerName(baseUrl, index),
+            url: `${baseUrl}/${movieId}`,
+        }));
 
         if (!movieId || isUnreleased || candidates.length === 0) {
-            setResult({ status: 'unavailable', url: null });
+            setResult({ status: 'unavailable', servers: [] });
             return undefined;
         }
 
-        setResult({ status: 'checking', url: null });
-        (async () => {
-            for (const url of candidates) {
-                if (await isLinkReachable(url)) {
-                    if (!isCancelled) setResult({ status: 'available', url });
-                    return;
-                }
-            }
-            if (!isCancelled) setResult({ status: 'unavailable', url: null });
-        })();
+        setResult({ status: 'checking', servers: [] });
+        // null = still checking, true/false = reachable or not
+        const reachable = candidates.map(() => null);
+        candidates.forEach(async (candidate, index) => {
+            reachable[index] = await isLinkReachable(candidate.url);
+            if (isCancelled) return;
+            const servers = candidates.filter((_, i) => reachable[i]);
+            const isDone = reachable.every((value) => value !== null);
+            setResult({
+                status: servers.length > 0 ? 'available' : isDone ? 'unavailable' : 'checking',
+                servers,
+            });
+        });
 
         return () => {
             isCancelled = true;
