@@ -1,6 +1,6 @@
 import { ExitToApp } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSelector } from 'react-redux';
 import { Loader, RatedCards } from './../../Components/index.js';
@@ -14,18 +14,10 @@ export default function Profile() {
     const [favoritePage, setFavoritePage] = useState(1);
     const [watchlistPage, setWatchlistPage] = useState(1);
     const { data: favoriteMovies,
-        isFetching: isFetchingFavoriteMovies,
-        refetch: refetchFavorites } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: favoritePage });
+        isFetching: isFetchingFavoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: favoritePage }, { refetchOnMountOrArgChange: true });
 
     const { data: watchlistMovies,
-        isFetching: isFetchingWatchlistMovies,
-        refetch: refetchWatchlistes } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: watchlistPage });
-
-    useEffect(() => {
-        refetchFavorites();
-        refetchWatchlistes();
-    }, []);
-
+        isFetching: isFetchingWatchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: watchlistPage }, { refetchOnMountOrArgChange: true });
 
     function logout() {
         localStorage.clear();
