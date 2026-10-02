@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { ActorCard, CollapseLine, Loader, MovieList, PageContainer, SectionHeader, TrailerCard } from './../../Components/index.js';
+import { ActorCard, CollapseLine, Loader, MovieList, PageContainer, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
 import { userSelector } from './../../features/auth.js';
@@ -33,6 +33,8 @@ export default function MovieInformation() {
     const { data: watchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1 }, { skip: !isAuthenticated });
     const { data: recommendations } = useGetRecommendationsQuery({ list: 'recommendations', movie_id: id });
     const watchLink = useWatchLink(id, data?.release_date);
+    const [selectedServerUrl, setSelectedServerUrl] = useState(null);
+    const selectedServer = watchLink.servers.find((server) => server.url === selectedServerUrl);
 
     function formatDate(inputDate) {
         if (!inputDate) return '—';
@@ -54,6 +56,17 @@ export default function MovieInformation() {
         const formattedDate = `${months[month - 1]} ${day}, ${year}`;
         return formattedDate;
     }
+
+    // Default to the first server that responds and keep it while slower ones finish checking
+    useEffect(() => {
+        if (!selectedServer && watchLink.servers.length > 0) {
+            setSelectedServerUrl(watchLink.servers[0].url);
+        }
+    }, [selectedServer, watchLink.servers]);
+
+    useEffect(() => {
+        setIsMovieLoading(true);
+    }, [selectedServerUrl]);
 
     useEffect(() => {
         setIsMovieFavorited(!!favoriteMovies?.results?.find((movie) => movie?.id === data?.id));
@@ -269,20 +282,29 @@ export default function MovieInformation() {
                             <Chip size='small' color='warning' variant='outlined' label='Watching movie not available right now' />
                         )}
                     >
+                        {watchLink.servers.length > 1 && <Box sx={{ mb: 2 }}>
+                            <Tabs
+                                label='Watch servers'
+                                tabs={watchLink.servers.map((server) => ({ label: server.name, value: server.url }))}
+                                value={selectedServer?.url}
+                                onChange={setSelectedServerUrl}
+                            />
+                        </Box>}
                         <Box sx={{ position: 'relative' }}>
                             {isMovieLoading && <div className={classes.movieLoader} >
                                 <Loader size='4rem' removeMargin />
                             </div>}
-                            <iframe
+                            {selectedServer && <iframe
+                                key={selectedServer.url}
                                 autoPlay
                                 title='Movie'
-                                src={watchLink.url}
+                                src={selectedServer.url}
                                 allow='autoplay'
                                 allowFullScreen
                                 scrolling="no"
                                 onLoad={() => setIsMovieLoading(false)}
                                 className={classes.player}
-                            />
+                            />}
                         </Box>
                     </CollapseLine>
                 </div>
