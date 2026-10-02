@@ -115,7 +115,7 @@ export default function MovieInformation() {
     const year = data?.release_date?.split('-')[0];
     const director = data?.credits?.crew?.find((member) => member?.job === 'Director')?.name;
     const cast = data?.credits?.cast?.slice(0, 15).filter((character) => character?.profile_path);
-    const trailers = data?.videos?.results?.slice(0, 4);
+    const trailers = data?.videos?.results?.slice(0, 10);
     const facts = [
         { label: 'Released', value: formatDate(data?.release_date) },
         { label: 'Runtime', value: data?.runtime ? `${data.runtime} min` : '—' },
