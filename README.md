@@ -58,7 +58,6 @@ https://api.themoviedb.org/
 
 
 <br>
-<!-- npm i --legacy-peer-deps -->
 
 ## Getting Started
 
@@ -72,7 +71,7 @@ To get started with the Fresh Cart frontend project, follow these steps:
 2. <strong>Install Dependencies:</strong> Navigate to the project directory and install the required dependencies using your preferred package manager:
 ```bash
   cd Filmpire
-  npm run getpackages
+  npm install
 ```
 3. <strong>Run the Application:</strong> Start the development server to run the application locally:
 ```bash
