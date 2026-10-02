@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import { FeaturedMovie, GenreFilter, Loader, MovieList, PageContainer, Pagination, SectionHeader } from './../../Components/index.js';
 import { useGetGenresQuery, useGetMoviesQuery } from './../../services/TMDB.js';
 import { CATEGORIES, MAX_TMDB_PAGES } from './../../utils/constants.js';
@@ -10,7 +11,9 @@ import useStyles from './Movies.style.js';
 export default function Movies() {
     const classes = useStyles();
     const [page, setPage] = useState(1);
-    const { genreIdOrCategoryName, searchQuery } = useSelector((state) => state.curruntGenreOrCategory);
+    const [searchParams] = useSearchParams();
+    const searchQuery = searchParams.get('s') ?? '';
+    const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
     const { data, error, isLoading, isFetching } = useGetMoviesQuery({ genreIdOrCategoryName, page, searchQuery });
     const { data: genres } = useGetGenresQuery();
 

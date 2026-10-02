@@ -18,7 +18,7 @@ export const tmdbApi = createApi({
 
                 //* Get Movies by Search
                 if (searchQuery) {
-                    return `/search/movie?query=${searchQuery}&page=${page}&api_key=${API_TMDB_KEY}`;
+                    return `/search/movie?query=${encodeURIComponent(searchQuery)}&page=${page}&api_key=${API_TMDB_KEY}`;
                 }
 
                 //* Get Movies by Category
