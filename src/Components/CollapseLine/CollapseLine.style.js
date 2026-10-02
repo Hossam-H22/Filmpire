@@ -8,6 +8,14 @@ export default makeStyles((theme) => ({
         background: theme.palette.background.paper,
         padding: '0 16px',
     },
+    disabled: {
+        '& $titleContainer': {
+            cursor: 'not-allowed',
+        },
+        '& $title': {
+            opacity: 0.5,
+        },
+    },
     titleContainer: {
         display: 'flex',
         alignItems: 'center',
@@ -21,6 +29,12 @@ export default makeStyles((theme) => ({
             letterSpacing: '0.03em',
             lineHeight: 1,
         },
+    },
+    title: {},
+    badge: {
+        marginLeft: 'auto',
+        display: 'flex',
+        alignItems: 'center',
     },
     icons: {
         color: theme.palette.text.primary,

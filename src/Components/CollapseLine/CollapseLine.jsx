@@ -1,26 +1,36 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Collapse, Grid, IconButton, Tooltip, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useStyles from './CollapseLine.style.js';
 
-export default function CollapseLine({ title, tooltipTitle, unmountOnExit, children }) {
+// disabled: header can't be opened and is dimmed; badge: element shown at the right of the header
+export default function CollapseLine({ title, tooltipTitle, unmountOnExit, disabled, badge, children }) {
     const classes = useStyles();
     const [isActorCollapseOpen, setIsActorCollapseOpen] = useState(false);
+
+    useEffect(() => {
+        if (disabled) setIsActorCollapseOpen(false);
+    }, [disabled]);
+
     return (
-        <Grid item container className={classes.container}>
+        <Grid item container className={`${classes.container} ${disabled ? classes.disabled : ''}`}>
             <Box
                 className={classes.titleContainer}
-                onClick={() => setIsActorCollapseOpen(prev => !prev)}
+                aria-disabled={disabled || undefined}
+                onClick={() => !disabled && setIsActorCollapseOpen(prev => !prev)}
             >
-                <Tooltip title={tooltipTitle}>
-                    <IconButton aria-label="expand row" size="small">
-                        {isActorCollapseOpen ? <KeyboardArrowUpIcon className={classes.icons} /> : <KeyboardArrowDownIcon className={classes.icons} />}
-                    </IconButton>
+                <Tooltip title={disabled ? '' : tooltipTitle ?? ''}>
+                    <span>
+                        <IconButton aria-label="expand row" size="small" disabled={disabled}>
+                            {isActorCollapseOpen ? <KeyboardArrowUpIcon className={classes.icons} /> : <KeyboardArrowDownIcon className={classes.icons} />}
+                        </IconButton>
+                    </span>
                 </Tooltip>
-                <Typography variant='h5'> {title} </Typography>
+                <Typography variant='h5' className={classes.title}> {title} </Typography>
+                {badge && <span className={classes.badge}>{badge}</span>}
             </Box>
-            <Collapse in={isActorCollapseOpen} timeout="auto" sx={{ width: '100%' }} unmountOnExit={unmountOnExit}>
+            <Collapse in={!disabled && isActorCollapseOpen} timeout="auto" sx={{ width: '100%' }} unmountOnExit={unmountOnExit}>
                 <Box sx={{ width: '100%', padding: '0 0 15px 0' }}>
                     {children}
                 </Box>
