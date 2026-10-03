@@ -7,6 +7,7 @@ export { default as Footer } from './Footer/Footer.jsx';
 export { default as GenreFilter } from './GenreFilter/GenreFilter.jsx';
 export { default as Loader } from './Loader/Loader.jsx';
 export { default as Logo } from './Logo/Logo.jsx';
+export { default as MediaTypeSwitch } from './MediaTypeSwitch/MediaTypeSwitch.jsx';
 export { default as MovieCard } from './MovieCard/MovieCard.jsx';
 export { default as MovieList } from './MovieList/MovieList.jsx';
 export { default as NavBar } from './NavBar/NavBar.jsx';

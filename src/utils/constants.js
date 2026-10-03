@@ -15,10 +15,24 @@ export const TV_WATCH_SERVERS = parseServerList(process.env.REACT_APP_TV_WATCH_S
 export const IMAGE_BACKDROP_BASE_LINK = process.env.REACT_APP_IMAGE_BACKDROP_BASE_LINK;
 export const TMDB_AVATAR_BASE_URL = process.env.REACT_APP_TMDB_AVATAR_BASE_URL;
 export const YOUTUBE_EMBED_BASE_URL = process.env.REACT_APP_YOUTUBE_EMBED_BASE_URL;
-export const CATEGORIES = [
-    { label: 'Popular', value: 'popular' },
-    { label: 'Top Rated', value: 'top_rated' },
-    { label: 'Upcoming', value: 'upcoming' },
+export const MEDIA_TYPES = [
+    { label: 'Movies', value: 'movie' },
+    { label: 'TV Shows', value: 'tv' },
 ];
+// Home route of each media type
+export const MEDIA_HOME = { movie: '/', tv: '/tv' };
+export const CATEGORIES = {
+    movie: [
+        { label: 'Popular', value: 'popular' },
+        { label: 'Top Rated', value: 'top_rated' },
+        { label: 'Upcoming', value: 'upcoming' },
+    ],
+    tv: [
+        { label: 'Popular', value: 'popular' },
+        { label: 'Top Rated', value: 'top_rated' },
+        { label: 'On The Air', value: 'on_the_air' },
+        { label: 'Airing Today', value: 'airing_today' },
+    ],
+};
 // TMDB never returns more than 500 pages for a list
 export const MAX_TMDB_PAGES = 500;
