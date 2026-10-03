@@ -49,6 +49,24 @@ export default makeStyles((theme) => ({
         fontSize: 12,
         fontWeight: 500,
     },
+    type: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        padding: '3px 7px',
+        borderRadius: 6,
+        background: 'rgba(10, 10, 14, 0.78)',
+        backdropFilter: 'blur(4px)',
+        color: '#fff',
+        fontFamily: theme.fonts.mono,
+        fontSize: 10.5,
+        fontWeight: 600,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+    },
+    typeTv: {
+        background: theme.palette.primary.main,
+    },
     star: {
         fontSize: '13px !important',
         color: '#f5c518',
@@ -91,5 +109,8 @@ export default makeStyles((theme) => ({
         marginTop: -6,
         fontSize: 12,
         color: theme.palette.text.secondary,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
     },
 }));
