@@ -4,3 +4,4 @@ export { default as MovieInformation } from './MovieInformation/MovieInformation
 export { default as Movies } from './Movies/Movies.jsx';
 export { default as NotFound } from './NotFound/NotFound.jsx';
 export { default as Profile } from './Profile/Profile.jsx';
+export { default as TvShowInformation } from './TvShowInformation/TvShowInformation.jsx';

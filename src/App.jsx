@@ -7,7 +7,7 @@ import './App.css';
 import useStyles from './App.styles.js';
 import { Footer, NavBar } from './Components/index.js';
 import { setMediaType } from './features/currentGenreOrCategory.js';
-import { Actors, Layout, MovieInformation, Movies, NotFound, Profile } from './Pages/index.js';
+import { Actors, Layout, MovieInformation, Movies, NotFound, Profile, TvShowInformation } from './Pages/index.js';
 import NavigationScroll from './utils/NavigationScroll.jsx';
 
 // Movie and TV pages set which kind of title the navbar browses; other pages keep the last one
@@ -39,6 +39,7 @@ function App() {
             <Route path='/' element={<Movies mediaType='movie' />} />
             <Route path='/tv' element={<Movies mediaType='tv' />} />
             <Route path='/movie/:id' element={<MovieInformation />} />
+            <Route path='/tv/:id' element={<TvShowInformation />} />
             <Route path='/actor/:id' element={<Actors />} />
             <Route path='/profile/:id' element={<Profile />} />
             <Route path='*' element={<NotFound />} />

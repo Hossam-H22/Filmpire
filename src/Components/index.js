@@ -16,6 +16,7 @@ export { default as PageContainer } from './PageContainer/PageContainer.jsx';
 export { default as Pagination } from './Pagination/Pagination.jsx';
 export { default as SavedListButtons } from './SavedListButtons/SavedListButtons.jsx';
 export { default as Search } from './Search/Search.jsx';
+export { default as SeasonsAndEpisodes } from './SeasonsAndEpisodes/SeasonsAndEpisodes.jsx';
 export { default as SectionHeader } from './SectionHeader/SectionHeader.jsx';
 export { default as Sidebar } from './Sidebar/Sidebar.jsx';
 export { default as Tabs } from './Tabs/Tabs.jsx';
