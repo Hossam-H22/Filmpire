@@ -8,9 +8,9 @@ import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js'
 import { useGetGenresQuery } from '../../services/TMDB.js';
 import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
 import avater from './../../assests/avatar-profile.jpg';
-import { CATEGORIES, TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
+import { CATEGORIES, MEDIA_HOME, TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
 import { ColorModeContext } from './../../utils/ToggoleColorMode';
-import { Logo, PageContainer, Search, Sidebar } from './../index.js';
+import { Logo, MediaTypeSwitch, PageContainer, Search, Sidebar } from './../index.js';
 import useStyles from './NavBar.style.js';
 
 export default function NavBar() {
@@ -21,8 +21,9 @@ export default function NavBar() {
     const colorMode = useContext(ColorModeContext);
     const isMobile = useMediaQuery('(max-width: 900px)');
     const { isAuthenticated, user } = useSelector(userSelector);
-    const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
-    const { data: genres } = useGetGenresQuery();
+    const { mediaType, genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
+    const { data: genres } = useGetGenresQuery(mediaType);
+    const home = MEDIA_HOME[mediaType];
     const token = localStorage.getItem('request_token');
     const sessionIdFromLocalStorage = localStorage.getItem('session_id');
     const activeCategory = typeof genreIdOrCategoryName === 'string' ? (genreIdOrCategoryName || 'popular') : null;
@@ -66,12 +67,14 @@ export default function NavBar() {
 
                 <Logo />
 
+                {!isMobile && <MediaTypeSwitch />}
+
                 {!isMobile && (
                     <nav className={classes.links}>
-                        {CATEGORIES.map(({ label, value }) => (
+                        {CATEGORIES[mediaType].map(({ label, value }) => (
                             <Link
                                 key={value}
-                                to='/'
+                                to={home}
                                 className={`${classes.link} ${activeCategory === value ? classes.linkActive : ''}`}
                                 onClick={() => dispatch(selectGenreOrCategory(value))}
                             >
@@ -97,7 +100,7 @@ export default function NavBar() {
                                 <MenuItem
                                     key={id}
                                     component={Link}
-                                    to='/'
+                                    to={home}
                                     selected={id === genreIdOrCategoryName}
                                     onClick={() => selectGenre(id)}
                                 >
@@ -120,8 +123,8 @@ export default function NavBar() {
                             Login
                         </Button>
                     ) : (
-                        <Tooltip title='My Movies'>
-                            <IconButton component={Link} to={`/profile/${user.id}`} className={classes.avatarButton} aria-label='My Movies'>
+                        <Tooltip title='My Library'>
+                            <IconButton component={Link} to={`/profile/${user.id}`} className={classes.avatarButton} aria-label='My Library'>
                                 <Avatar
                                     className={classes.avatar}
                                     alt='Profile'

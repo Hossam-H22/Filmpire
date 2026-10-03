@@ -4,16 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
 import { useGetGenresQuery } from '../../services/TMDB.js';
-import { CATEGORIES } from './../../utils/constants.js';
+import { CATEGORIES, MEDIA_HOME } from './../../utils/constants.js';
 import { Tabs } from './../index.js';
 import useStyles from './GenreFilter.style.js';
 
-// Category tabs plus a horizontally scrolling row of genre chips
-export default function GenreFilter() {
+// Category tabs plus a horizontally scrolling row of genre chips, for movies or TV shows (mediaType)
+export default function GenreFilter({ mediaType = 'movie' }) {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const { genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
-    const { data } = useGetGenresQuery();
+    const selection = useSelector((state) => state.curruntGenreOrCategory);
+    const genreIdOrCategoryName = selection.mediaType === mediaType ? selection.genreIdOrCategoryName : '';
+    const { data } = useGetGenresQuery(mediaType);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const isSearching = Boolean(searchParams.get('s'));
@@ -23,13 +24,13 @@ export default function GenreFilter() {
     // Picking a category or genre leaves search mode
     function select(value) {
         dispatch(selectGenreOrCategory(value));
-        navigate('/');
+        navigate(MEDIA_HOME[mediaType]);
     }
 
     return <div className={classes.container}>
         <Tabs
             label='Categories'
-            tabs={CATEGORIES}
+            tabs={CATEGORIES[mediaType]}
             value={activeCategory}
             onChange={select}
         />

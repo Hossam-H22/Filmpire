@@ -4,17 +4,30 @@ import { Box, Collapse, Grid, IconButton, Tooltip, Typography } from '@mui/mater
 import React, { useEffect, useState } from 'react';
 import useStyles from './CollapseLine.style.js';
 
-// disabled: header can't be opened and is dimmed; badge: element shown at the right of the header
-export default function CollapseLine({ title, tooltipTitle, unmountOnExit, disabled, badge, children }) {
+// disabled: header can't be opened and is dimmed; badge: element shown at the right of the header.
+// Pass open and onOpenChange to control it from outside; otherwise it keeps its own state.
+export default function CollapseLine({ title, tooltipTitle, unmountOnExit, disabled, badge, open, onOpenChange, id, children }) {
     const classes = useStyles();
-    const [isActorCollapseOpen, setIsActorCollapseOpen] = useState(false);
+    const [isOpenState, setIsOpenState] = useState(false);
+    const isControlled = open !== undefined;
+    const isActorCollapseOpen = isControlled ? open : isOpenState;
+
+    function setIsActorCollapseOpen(change) {
+        const next = typeof change === 'function' ? change(isActorCollapseOpen) : change;
+        if (!isControlled) setIsOpenState(next);
+        onOpenChange?.(next);
+    }
 
     useEffect(() => {
-        if (disabled) setIsActorCollapseOpen(false);
+        if (disabled) {
+            setIsOpenState(false);
+            onOpenChange?.(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [disabled]);
 
     return (
-        <Grid item container className={`${classes.container} ${disabled ? classes.disabled : ''}`}>
+        <Grid item container id={id} className={`${classes.container} ${disabled ? classes.disabled : ''}`}>
             <Box
                 className={classes.titleContainer}
                 aria-disabled={disabled || undefined}

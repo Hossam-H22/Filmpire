@@ -1,7 +1,9 @@
 import { Search as SearchIcon } from '@mui/icons-material'
 import { InputBase } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { MEDIA_HOME } from './../../utils/constants.js'
 import useStyles from './Search.style.js'
 
 
@@ -11,6 +13,8 @@ export default function Search({ fullWidth, onSearch }) {
     const urlQuery = searchParams.get('s') ?? '';
     const [query, setQuery] = useState(urlQuery);
     const navigate = useNavigate();
+    const { mediaType } = useSelector((state) => state.curruntGenreOrCategory);
+    const home = MEDIA_HOME[mediaType];
 
     // Keep the input in step with the URL (reload, back/forward, leaving search)
     useEffect(() => {
@@ -20,7 +24,7 @@ export default function Search({ fullWidth, onSearch }) {
     function handleKeyDown(e) {
         if (e.key === 'Enter') {
             const trimmedQuery = query.trim();
-            navigate(trimmedQuery ? `/?s=${encodeURIComponent(trimmedQuery)}` : '/');
+            navigate(trimmedQuery ? `${home}?s=${encodeURIComponent(trimmedQuery)}` : home);
             onSearch?.();
         }
     }
@@ -31,9 +35,9 @@ export default function Search({ fullWidth, onSearch }) {
             onKeyDown={handleKeyDown}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder='Search movies…'
+            placeholder='Search movies & shows…'
             className={classes.input}
-            inputProps={{ 'aria-label': 'Search movies' }}
+            inputProps={{ 'aria-label': 'Search movies and TV shows' }}
         />
     </label>
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MOVIE_WATCH_SERVERS } from './constants.js';
+import { MOVIE_WATCH_SERVERS, TV_WATCH_SERVERS } from './constants.js';
 
 const PROBE_TIMEOUT_MS = 8000;
 
@@ -33,21 +33,33 @@ function getServerName(baseUrl, index) {
     }
 }
 
-// Checks every configured watch server for this movie in parallel.
+// Watch URL for a movie ({ id }) or a TV episode ({ id, season, episode }).
+// A base URL with {id}/{season}/{episode} placeholders is filled in; otherwise the values are appended as path segments.
+export function buildWatchUrl(baseUrl, params) {
+    if (baseUrl.includes('{id}')) {
+        return baseUrl.replace(/\{(id|season|episode)\}/g, (match, key) => params[key] ?? '');
+    }
+    return [baseUrl, params.id, params.season, params.episode].filter((part) => part !== undefined).join('/');
+}
+
+// Checks every configured watch server for this movie or TV show in parallel.
+// TV servers are checked with the first episode; pick an episode later with buildWatchUrl(server.baseUrl, ...).
 // status: 'checking' (none working yet, some still pending) | 'available' | 'unavailable'
-// servers: the working servers, in .env order: [{ name, url }]
-export default function useWatchLink(movieId, releaseDate) {
+// servers: the working servers, in .env order: [{ name, baseUrl, url }]
+export default function useWatchLink(id, releaseDate, mediaType = 'movie') {
     const [result, setResult] = useState({ status: 'checking', servers: [] });
 
     useEffect(() => {
         let isCancelled = false;
         const isUnreleased = releaseDate && new Date(releaseDate) > new Date();
-        const candidates = MOVIE_WATCH_SERVERS.map((baseUrl, index) => ({
+        const isTv = mediaType === 'tv';
+        const candidates = (isTv ? TV_WATCH_SERVERS : MOVIE_WATCH_SERVERS).map((baseUrl, index) => ({
             name: getServerName(baseUrl, index),
-            url: `${baseUrl}/${movieId}`,
+            baseUrl,
+            url: buildWatchUrl(baseUrl, isTv ? { id, season: 1, episode: 1 } : { id }),
         }));
 
-        if (!movieId || isUnreleased || candidates.length === 0) {
+        if (!id || isUnreleased || candidates.length === 0) {
             setResult({ status: 'unavailable', servers: [] });
             return undefined;
         }
@@ -69,7 +81,7 @@ export default function useWatchLink(movieId, releaseDate) {
         return () => {
             isCancelled = true;
         };
-    }, [movieId, releaseDate]);
+    }, [id, releaseDate, mediaType]);
 
     return result;
 }
