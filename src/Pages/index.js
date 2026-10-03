@@ -1,3 +1,4 @@
+export { default as Approved } from './Approved/Approved.jsx';
 export { default as Actors } from './Actors/Actors.jsx';
 export { default as Layout } from './Layout/Layout.jsx';
 export { default as MovieInformation } from './MovieInformation/MovieInformation.jsx';

@@ -8,12 +8,11 @@ import { API_BASE_URL, API_TMDB_KEY } from './constants.js';
 // Favorite and watchlist state of one movie or TV show (mediaType 'movie' | 'tv'), with toggles that save to TMDB.
 // notice: the last message to show the user, or null
 export default function useSavedLists(mediaType, id) {
-    const { user, isAuthenticated } = useSelector(userSelector);
+    const { user, isAuthenticated, sessionId } = useSelector(userSelector);
     const [isFavorited, setIsFavorited] = useState(false);
     const [isWatchlisted, setIsWatchlisted] = useState(false);
     const [pendingList, setPendingList] = useState(null);
     const [notice, setNotice] = useState(null);
-    const sessionId = localStorage.getItem('session_id');
     const listType = mediaType === 'tv' ? 'tv' : 'movies';
     const noun = mediaType === 'tv' ? 'shows' : 'movies';
 

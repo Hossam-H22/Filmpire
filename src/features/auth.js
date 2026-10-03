@@ -4,22 +4,29 @@ const initialState = {
     user: {},
     isAuthenticated: false,
     sessionId: '',
+    // True while a stored session is being checked, so the navbar doesn't flash the Login button
+    isLoading: Boolean(localStorage.getItem('session_id')),
 }
 
 export const authSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setUser: (state, action) => {
-            state.user = action.payload;
-            state.isAuthenticated = true;
-            state.sessionId = localStorage.getItem('session_id');
-            localStorage.setItem('accountId', action.payload?.id);
+        startLogin: (state) => {
+            state.isLoading = true;
         },
+        // payload: { user, sessionId }
+        setUser: (state, action) => {
+            state.user = action.payload.user;
+            state.sessionId = action.payload.sessionId;
+            state.isAuthenticated = true;
+            state.isLoading = false;
+        },
+        clearUser: () => ({ ...initialState, isLoading: false }),
     },
 });
 
-export const { setUser } = authSlice.actions;
+export const { startLogin, setUser, clearUser } = authSlice.actions;
 
 export default authSlice.reducer;
 

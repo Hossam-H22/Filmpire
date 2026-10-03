@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectGenreOrCategory } from '../features/currentGenreOrCategory.js';
 import { ColorModeContext } from '../utils/ToggoleColorMode.jsx';
-import { fetchToken } from '../utils/index.js';
+import { fetchToken, logout } from '../utils/index.js';
 
 
 export default function useAlan() {
@@ -40,8 +40,7 @@ export default function useAlan() {
                     fetchToken();
                 }
                 else if (command === 'logout') {
-                    localStorage.clear();
-                    window.location.href = '/';
+                    logout();
                 }
 
             }

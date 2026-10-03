@@ -3,10 +3,10 @@ import { AppBar, Avatar, Button, Drawer, IconButton, Menu, MenuItem, Tooltip, us
 import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { setUser, userSelector } from '../../features/auth.js';
+import { clearUser, setUser, startLogin, userSelector } from '../../features/auth.js';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory.js';
 import { useGetGenresQuery } from '../../services/TMDB.js';
-import { createSessionId, fetchToken, moviesApi } from '../../utils/index.js';
+import { clearAuth, fetchAccount, fetchToken, getStoredSessionId } from '../../utils/index.js';
 import avater from './../../assests/avatar-profile.jpg';
 import { CATEGORIES, MEDIA_HOME, TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
 import { ColorModeContext } from './../../utils/ToggoleColorMode';
@@ -20,31 +20,31 @@ export default function NavBar() {
     const [genresAnchor, setGenresAnchor] = useState(null);
     const colorMode = useContext(ColorModeContext);
     const isMobile = useMediaQuery('(max-width: 900px)');
-    const { isAuthenticated, user } = useSelector(userSelector);
+    const { isAuthenticated, isLoading, user } = useSelector(userSelector);
     const { mediaType, genreIdOrCategoryName } = useSelector((state) => state.curruntGenreOrCategory);
     const { data: genres } = useGetGenresQuery(mediaType);
     const home = MEDIA_HOME[mediaType];
-    const token = localStorage.getItem('request_token');
-    const sessionIdFromLocalStorage = localStorage.getItem('session_id');
     const activeCategory = typeof genreIdOrCategoryName === 'string' ? (genreIdOrCategoryName || 'popular') : null;
     const activeGenre = genres?.genres?.find(({ id }) => id === genreIdOrCategoryName);
 
+    // Restore the saved session on page load. New sessions are created on the /approved page
     useEffect(() => {
-        const logInUser = async () => {
-            if (token) {
-                if (sessionIdFromLocalStorage) {
-                    const { data: userData } = await moviesApi.get(`/account?session_id=${sessionIdFromLocalStorage}`)
-                    dispatch(setUser(userData));
-                }
-                else {
-                    const sessionId = await createSessionId();
-                    const { data: userData } = await moviesApi.get(`/account?session_id=${sessionId}`)
-                    dispatch(setUser(userData));
-                }
+        const sessionId = getStoredSessionId();
+        if (!sessionId) return;
+
+        const restoreSession = async () => {
+            dispatch(startLogin());
+            try {
+                const user = await fetchAccount(sessionId);
+                dispatch(setUser({ user, sessionId }));
+            } catch (error) {
+                // Expired or revoked session: forget it so the user can log in again
+                if (error?.response?.status === 401) clearAuth();
+                dispatch(clearUser());
             }
         }
-        logInUser();
-    }, [dispatch, sessionIdFromLocalStorage, token]);
+        restoreSession();
+    }, [dispatch]);
 
     function selectGenre(id) {
         dispatch(selectGenreOrCategory(id));
@@ -118,7 +118,7 @@ export default function NavBar() {
                             {colorMode.mode === 'dark' ? <Brightness7 fontSize='small' /> : <Brightness4 fontSize='small' />}
                         </IconButton>
                     </Tooltip>
-                    {!isAuthenticated ? (
+                    {isLoading ? null : !isAuthenticated ? (
                         <Button variant='contained' size='small' onClick={fetchToken} endIcon={<AccountCircle />}>
                             Login
                         </Button>
