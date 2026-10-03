@@ -5,6 +5,9 @@ export default makeStyles((theme) => ({
         paddingTop: 28,
         transition: 'opacity 0.2s',
     },
+    searchTypes: {
+        marginBottom: 24,
+    },
     empty: {
         border: `1px dashed ${theme.palette.divider}`,
         borderRadius: 16,

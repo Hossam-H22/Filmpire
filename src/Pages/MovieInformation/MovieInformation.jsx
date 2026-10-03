@@ -1,61 +1,32 @@
-import { Bookmark, BookmarkBorder, Favorite, FavoriteBorder, Language, PlayArrow, Star } from '@mui/icons-material';
-import { Alert, Box, Button, Chip, CircularProgress, Snackbar } from '@mui/material';
-import axios from 'axios';
+import { Language, PlayArrow, Star } from '@mui/icons-material';
+import { Box, Button, Chip, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { ActorCard, CollapseLine, Loader, MovieList, PageContainer, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
+import { ActorCard, CollapseLine, Loader, MovieList, Notice, PageContainer, SavedListButtons, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
-import { userSelector } from './../../features/auth.js';
 import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
-import { useGetListQuery, useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
-import { API_BASE_URL, API_TMDB_KEY, IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
-import { fetchToken } from './../../utils/index.js';
+import { useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
+import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
+import { formatDate, formatRuntime } from './../../utils/format.js';
+import useSavedLists from './../../utils/useSavedLists.js';
 import useWatchLink from './../../utils/useWatchLink.js';
 import useStyles from './MovieInformation.style.js';
 
 export default function MovieInformation() {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const { user, isAuthenticated } = useSelector(userSelector);
     const [isMovieLoading, setIsMovieLoading] = useState(true);
-    const [isMovieFavorited, setIsMovieFavorited] = useState(false);
-    const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
-    const [pendingList, setPendingList] = useState(null);
-    const [notice, setNotice] = useState(null);
     const { id } = useParams();
 
-    const sessionId = localStorage.getItem('session_id');
     const { data, isFetching, error } = useGetMovieQuery(id);
-    const { data: favoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: 1 }, { skip: !isAuthenticated });
-    const { data: watchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: 1 }, { skip: !isAuthenticated });
     const { data: recommendations } = useGetRecommendationsQuery({ list: 'recommendations', movie_id: id });
+    const savedLists = useSavedLists('movie', id);
     const watchLink = useWatchLink(id, data?.release_date);
     const [selectedServerUrl, setSelectedServerUrl] = useState(null);
     const selectedServer = watchLink.servers.find((server) => server.url === selectedServerUrl);
-
-    function formatDate(inputDate) {
-        if (!inputDate) return '—';
-        const months = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
-        ];
-        const [year, month, day] = inputDate.split("-").map(Number);
-        const formattedDate = `${months[month - 1]} ${day}, ${year}`;
-        return formattedDate;
-    }
 
     // Default to the first server that responds and keep it while slower ones finish checking
     useEffect(() => {
@@ -68,57 +39,10 @@ export default function MovieInformation() {
         setIsMovieLoading(true);
     }, [selectedServerUrl]);
 
-    useEffect(() => {
-        setIsMovieFavorited(!!favoriteMovies?.results?.find((movie) => movie?.id === data?.id));
-    }, [favoriteMovies, data]);
-
-    useEffect(() => {
-        setIsMovieWatchlisted(!!watchlistMovies?.results?.find((movie) => movie?.id === data?.id));
-    }, [watchlistMovies, data]);
-
-
     function formatMoney(amount) {
         if (!amount) return '—';
         return amount >= 1e9 ? `$${(amount / 1e9).toFixed(2)}B` : `$${(amount / 1e6).toFixed(1)}M`;
     }
-
-    function formatRuntime(minutes) {
-        if (!minutes) return null;
-        return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
-    }
-
-    // listName is 'favorite' or 'watchlist'; the button only changes once TMDB confirms the update
-    async function updateList(listName, isInList, setIsInList) {
-        if (!isAuthenticated || !sessionId) {
-            setNotice({ severity: 'info', message: 'Please log in to save movies.', needsLogin: true });
-            return;
-        }
-
-        setPendingList(listName);
-        try {
-            const { data: response } = await axios.post(`${API_BASE_URL}/account/${user?.id}/${listName}?api_key=${API_TMDB_KEY}&session_id=${sessionId}`, {
-                media_type: 'movie',
-                media_id: Number(id),
-                [listName]: !isInList,
-            });
-            if (!response?.success) throw new Error(response?.status_message);
-            setIsInList(!isInList);
-        } catch (error) {
-            const isAuthError = error?.response?.status === 401;
-            setNotice({
-                severity: 'error',
-                message: isAuthError
-                    ? 'Your TMDB login has expired. Log in again to save movies.'
-                    : error?.response?.data?.status_message ?? error?.message ?? `Could not update your ${listName}. Try again.`,
-                needsLogin: isAuthError,
-            });
-        } finally {
-            setPendingList(null);
-        }
-    }
-
-    const addToFavorites = () => updateList('favorite', isMovieFavorited, setIsMovieFavorited);
-    const addToWatchlist = () => updateList('watchlist', isMovieWatchlisted, setIsMovieWatchlisted);
 
 
     if (isFetching) return <Loader size='8rem' />
@@ -214,22 +138,7 @@ export default function MovieInformation() {
                     </div>
                     <div className={classes.actions}>
                         {trailers?.length > 0 && <Button variant='contained' startIcon={<PlayArrow />} onClick={scrollToTrailers}>Trailer</Button>}
-                        <Button
-                            className={`${classes.ghost} ${isMovieFavorited ? classes.ghostOn : ''}`}
-                            startIcon={isMovieFavorited ? <Favorite /> : <FavoriteBorder />}
-                            onClick={addToFavorites}
-                            disabled={pendingList === 'favorite'}
-                        >
-                            {isMovieFavorited ? 'Favorited' : 'Favorite'}
-                        </Button>
-                        <Button
-                            className={`${classes.ghost} ${isMovieWatchlisted ? classes.ghostOn : ''}`}
-                            startIcon={isMovieWatchlisted ? <Bookmark /> : <BookmarkBorder />}
-                            onClick={addToWatchlist}
-                            disabled={pendingList === 'watchlist'}
-                        >
-                            {isMovieWatchlisted ? 'In watchlist' : 'Watchlist'}
-                        </Button>
+                        <SavedListButtons savedLists={savedLists} className={classes.ghost} activeClassName={classes.ghostOn} />
                         <Button
                             className={classes.ghost}
                             target='_blank'
@@ -335,20 +244,6 @@ export default function MovieInformation() {
             </section>}
         </PageContainer>
 
-        <Snackbar
-            open={Boolean(notice)}
-            autoHideDuration={6000}
-            onClose={(e, reason) => reason !== 'clickaway' && setNotice(null)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        >
-            {notice ? <Alert
-                severity={notice.severity}
-                variant='filled'
-                onClose={() => setNotice(null)}
-                action={notice.needsLogin && <Button color='inherit' size='small' onClick={fetchToken}>Log in</Button>}
-            >
-                {notice.message}
-            </Alert> : <span />}
-        </Snackbar>
+        <Notice notice={savedLists.notice} onClose={() => savedLists.setNotice(null)} />
     </>
 }

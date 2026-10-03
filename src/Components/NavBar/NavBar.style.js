@@ -21,6 +21,12 @@ export default makeStyles((theme) => ({
     links: {
         display: 'flex',
         gap: 4,
+        minWidth: 0,
+        overflowX: 'auto',
+        scrollbarWidth: 'none',
+        '&::-webkit-scrollbar': {
+            display: 'none',
+        },
     },
     link: {
         display: 'inline-flex',
@@ -33,6 +39,7 @@ export default makeStyles((theme) => ({
         font: 'inherit',
         fontWeight: 600,
         fontSize: 14,
+        whiteSpace: 'nowrap',
         cursor: 'pointer',
         color: theme.palette.text.secondary,
         '&:hover': {

@@ -7,33 +7,38 @@ export const tmdbApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: API_BASE_URL }),
     endpoints: (builder) => ({
 
-        // * Get Genres
+        // * Get Genres, mediaType is 'movie' or 'tv'
         getGenres: builder.query({
-            query: () => `/genre/movie/list?api_key=${API_TMDB_KEY}`
+            query: (mediaType = 'movie') => `/genre/${mediaType}/list?api_key=${API_TMDB_KEY}`
         }),
 
-        //* Get Movies by [Type]
+        //* Get Movies or TV shows by [Type]
         getMovies: builder.query({
-            query: ({ genreIdOrCategoryName, page, searchQuery }) => {
+            query: ({ mediaType = 'movie', genreIdOrCategoryName, page, searchQuery, searchType = 'multi' }) => {
 
-                //* Get Movies by Search
+                //* Get Movies and TV shows by Search, searchType is 'multi', 'movie' or 'tv'
                 if (searchQuery) {
-                    return `/search/movie?query=${encodeURIComponent(searchQuery)}&page=${page}&api_key=${API_TMDB_KEY}`;
+                    return `/search/${searchType}?query=${encodeURIComponent(searchQuery)}&page=${page}&api_key=${API_TMDB_KEY}`;
                 }
 
-                //* Get Movies by Category
+                //* Get by Category
                 if (genreIdOrCategoryName && typeof genreIdOrCategoryName === 'string') {
-                    return `/movie/${genreIdOrCategoryName}?page=${page}&api_key=${API_TMDB_KEY}`;
+                    return `/${mediaType}/${genreIdOrCategoryName}?page=${page}&api_key=${API_TMDB_KEY}`;
                 }
 
-                //* Get Movies by Genre
+                //* Get by Genre
                 if (genreIdOrCategoryName && typeof genreIdOrCategoryName === 'number') {
-                    return `discover/movie?with_genres=${genreIdOrCategoryName}&page=${page}&api_key=${API_TMDB_KEY}`;
+                    return `discover/${mediaType}?with_genres=${genreIdOrCategoryName}&page=${page}&api_key=${API_TMDB_KEY}`;
                 }
 
-                //* Get Popular Movies
-                return `/movie/popular?page=${page}&api_key=${API_TMDB_KEY}`;
-            }
+                //* Get Popular
+                return `/${mediaType}/popular?page=${page}&api_key=${API_TMDB_KEY}`;
+            },
+            // A multi search also returns people, which have no page here
+            transformResponse: (response) => ({
+                ...response,
+                results: response?.results?.filter((result) => result?.media_type !== 'person'),
+            }),
         }),
 
         //* Get Movie
@@ -41,22 +46,33 @@ export const tmdbApi = createApi({
             query: (id) => `/movie/${id}?append_to_response=videos,credits&api_key=${API_TMDB_KEY}`,
         }),
 
-        //* Get User Specific Lists
+        //* Get TV Show
+        getTvShow: builder.query({
+            query: (id) => `/tv/${id}?append_to_response=videos,credits,external_ids&api_key=${API_TMDB_KEY}`,
+        }),
+
+        //* Get the episodes of one season of a TV show
+        getSeason: builder.query({
+            query: ({ id, seasonNumber }) => `/tv/${id}/season/${seasonNumber}?api_key=${API_TMDB_KEY}`,
+        }),
+
+        //* Get User Specific Lists, e.g. listName 'favorite/movies' or 'watchlist/tv'
         getList: builder.query({
             query: ({ listName, accountId, sessionId, page }) =>
                 `/account/${accountId}/${listName}?page=${page}&session_id=${sessionId}&api_key=${API_TMDB_KEY}`
         }),
 
         getRecommendations: builder.query({
-            query: ({ movie_id, list }) => `/movie/${movie_id}/${list}?api_key=${API_TMDB_KEY}`,
+            query: ({ mediaType = 'movie', movie_id, list }) => `/${mediaType}/${movie_id}/${list}?api_key=${API_TMDB_KEY}`,
         }),
 
         getActorsDetails: builder.query({
             query: (id) => `/person/${id}?api_key=${API_TMDB_KEY}`,
         }),
 
-        getMoviesByActorId: builder.query({
-            query: ({ id, page }) => `/discover/movie?with_cast=${id}&page=${page}&api_key=${API_TMDB_KEY}`,
+        //* Movies and TV shows an actor appeared in
+        getActorCredits: builder.query({
+            query: (id) => `/person/${id}/combined_credits?api_key=${API_TMDB_KEY}`,
         }),
 
 
@@ -67,8 +83,10 @@ export const {
     useGetGenresQuery,
     useGetMoviesQuery,
     useGetMovieQuery,
+    useGetTvShowQuery,
+    useGetSeasonQuery,
     useGetListQuery,
     useGetRecommendationsQuery,
     useGetActorsDetailsQuery,
-    useGetMoviesByActorIdQuery,
+    useGetActorCreditsQuery,
 } = tmdbApi;

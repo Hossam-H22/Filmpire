@@ -1,5 +1,5 @@
 import { ExitToApp } from '@mui/icons-material';
-import { Avatar, Button, Typography } from '@mui/material';
+import { Avatar, Button, Chip, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSelector } from 'react-redux';
@@ -12,33 +12,45 @@ import { TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
 import useStyles from './Profile.style.js';
 
 
+const LIST_TYPES = [
+    { label: 'Movies', value: 'movies' },
+    { label: 'TV Shows', value: 'tv' },
+];
+
 export default function Profile() {
     const classes = useStyles();
     const { user } = useSelector(userSelector);
     const sessionId = localStorage.getItem('session_id');
     const [activeTab, setActiveTab] = useState('favorite');
-    const [favoritePage, setFavoritePage] = useState(1);
-    const [watchlistPage, setWatchlistPage] = useState(1);
-    const { data: favoriteMovies,
-        isLoading: isLoadingFavoriteMovies } = useGetListQuery({ listName: 'favorite/movies', accountId: user.id, sessionId: sessionId, page: favoritePage }, { refetchOnMountOrArgChange: true });
-
-    const { data: watchlistMovies,
-        isLoading: isLoadingWatchlistMovies } = useGetListQuery({ listName: 'watchlist/movies', accountId: user.id, sessionId: sessionId, page: watchlistPage }, { refetchOnMountOrArgChange: true });
+    const [listType, setListType] = useState('movies');
+    // Page of each list, keyed by TMDB list name such as 'favorite/tv'
+    const [pages, setPages] = useState({});
+    const listQuery = (listName) => ({ listName, accountId: user.id, sessionId: sessionId, page: pages[listName] ?? 1 });
+    const options = { refetchOnMountOrArgChange: true };
+    const lists = {
+        'favorite/movies': useGetListQuery(listQuery('favorite/movies'), options),
+        'favorite/tv': useGetListQuery(listQuery('favorite/tv'), options),
+        'watchlist/movies': useGetListQuery(listQuery('watchlist/movies'), options),
+        'watchlist/tv': useGetListQuery(listQuery('watchlist/tv'), options),
+    };
 
     function logout() {
         localStorage.clear();
         window.location.href = '/';
     }
 
-    if (isLoadingFavoriteMovies || isLoadingWatchlistMovies) return <Loader size='8rem' />
+    if (Object.values(lists).some((list) => list.isLoading)) return <Loader size='8rem' />
 
-    const favoriteCount = favoriteMovies?.total_results ?? 0;
-    const watchlistCount = watchlistMovies?.total_results ?? 0;
-    const lists = {
-        favorite: { data: favoriteMovies, page: favoritePage, setPage: setFavoritePage, empty: 'Tap Favorite on any movie page to save it here.' },
-        watchlist: { data: watchlistMovies, page: watchlistPage, setPage: setWatchlistPage, empty: 'Tap Watchlist on any movie page to plan what to watch next.' },
-    };
-    const list = lists[activeTab];
+    const countOf = (listName) => lists[listName].data?.total_results ?? 0;
+    const favoriteCount = countOf('favorite/movies') + countOf('favorite/tv');
+    const watchlistCount = countOf('watchlist/movies') + countOf('watchlist/tv');
+    const activeListName = `${activeTab}/${listType}`;
+    const list = lists[activeListName].data;
+    const page = pages[activeListName] ?? 1;
+    const noun = listType === 'tv' ? 'show' : 'movie';
+    const empty = activeTab === 'favorite'
+        ? `Tap Favorite on any ${noun} page to save it here.`
+        : `Tap Watchlist on any ${noun} page to plan what to watch next.`;
 
     return <>
         <Helmet>
@@ -52,7 +64,7 @@ export default function Profile() {
                     src={user?.avatar?.tmdb?.avatar_path ? `${TMDB_AVATAR_BASE_URL}/${user?.avatar?.tmdb?.avatar_path}` : avater}
                 />
                 <div>
-                    <div className={classes.eyebrow}>My Movies</div>
+                    <div className={classes.eyebrow}>My Library</div>
                     <h1 className={classes.name}>{user?.name || user?.username}</h1>
                 </div>
                 <div className={classes.stats}>
@@ -76,16 +88,32 @@ export default function Profile() {
                         { label: `Watchlist · ${watchlistCount}`, value: 'watchlist' },
                     ]}
                 />
+                <div className={classes.listTypes}>
+                    {LIST_TYPES.map(({ label, value }) => (
+                        <Chip
+                            key={value}
+                            label={`${label} · ${countOf(`${activeTab}/${value}`)}`}
+                            clickable
+                            color={value === listType ? 'primary' : 'default'}
+                            variant={value === listType ? 'filled' : 'outlined'}
+                            onClick={() => setListType(value)}
+                        />
+                    ))}
+                </div>
             </div>
-            {list.data?.total_results ? <>
-                <MovieList movies={list.data} />
-                <Pagination curruntPage={list.page} setPage={list.setPage} totalPages={list.data?.total_pages} />
+            {list?.total_results ? <>
+                <MovieList movies={list} mediaType={listType === 'tv' ? 'tv' : 'movie'} />
+                <Pagination
+                    curruntPage={page}
+                    setPage={(nextPage) => setPages((prev) => ({ ...prev, [activeListName]: nextPage }))}
+                    totalPages={list?.total_pages}
+                />
             </> : (
                 <div className={classes.empty}>
                     <div className={classes.reel} />
                     <Typography variant='h5' className={classes.emptyTitle}>Nothing here yet</Typography>
-                    <Typography color='text.secondary'>{list.empty}</Typography>
-                    <Button variant='contained' component={Link} to='/'>Browse popular movies</Button>
+                    <Typography color='text.secondary'>{empty}</Typography>
+                    <Button variant='contained' component={Link} to={listType === 'tv' ? '/tv' : '/'}>Browse popular {noun}s</Button>
                 </div>
             )}
         </PageContainer>
