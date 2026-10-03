@@ -52,7 +52,15 @@ export default makeStyles((theme) => ({
         },
     },
     tabs: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
         padding: '20px 0 28px',
+    },
+    listTypes: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 8,
     },
     empty: {
         display: 'flex',
