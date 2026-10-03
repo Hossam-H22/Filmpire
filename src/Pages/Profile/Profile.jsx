@@ -9,6 +9,7 @@ import avater from './../../assests/avatar-profile.jpg';
 import { userSelector } from './../../features/auth.js';
 import { useGetListQuery } from './../../services/TMDB.js';
 import { TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
+import { fetchToken, logout } from './../../utils/index.js';
 import useStyles from './Profile.style.js';
 
 
@@ -19,14 +20,14 @@ const LIST_TYPES = [
 
 export default function Profile() {
     const classes = useStyles();
-    const { user } = useSelector(userSelector);
-    const sessionId = localStorage.getItem('session_id');
+    const { user, sessionId, isAuthenticated, isLoading } = useSelector(userSelector);
     const [activeTab, setActiveTab] = useState('favorite');
     const [listType, setListType] = useState('movies');
     // Page of each list, keyed by TMDB list name such as 'favorite/tv'
     const [pages, setPages] = useState({});
     const listQuery = (listName) => ({ listName, accountId: user.id, sessionId: sessionId, page: pages[listName] ?? 1 });
-    const options = { refetchOnMountOrArgChange: true };
+    // Wait for the account to load; without it the requests would go to /account/undefined
+    const options = { refetchOnMountOrArgChange: true, skip: !isAuthenticated };
     const lists = {
         'favorite/movies': useGetListQuery(listQuery('favorite/movies'), options),
         'favorite/tv': useGetListQuery(listQuery('favorite/tv'), options),
@@ -34,12 +35,15 @@ export default function Profile() {
         'watchlist/tv': useGetListQuery(listQuery('watchlist/tv'), options),
     };
 
-    function logout() {
-        localStorage.clear();
-        window.location.href = '/';
-    }
+    if (isLoading || Object.values(lists).some((list) => list.isLoading)) return <Loader size='8rem' />
 
-    if (Object.values(lists).some((list) => list.isLoading)) return <Loader size='8rem' />
+    if (!isAuthenticated) return <PageContainer>
+        <div className={classes.empty}>
+            <Typography variant='h5' className={classes.emptyTitle}>You're not logged in</Typography>
+            <Typography color='text.secondary'>Log in with your TMDB account to see your favorites and watchlist.</Typography>
+            <Button variant='contained' onClick={fetchToken}>Log in</Button>
+        </div>
+    </PageContainer>
 
     const countOf = (listName) => lists[listName].data?.total_results ?? 0;
     const favoriteCount = countOf('favorite/movies') + countOf('favorite/tv');
