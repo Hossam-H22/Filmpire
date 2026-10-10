@@ -5,10 +5,11 @@ import { useDispatch } from 'react-redux';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import useStyles from './App.styles.js';
-import { Footer, NavBar } from './Components/index.js';
+import { Footer, NavBar, Notice } from './Components/index.js';
 import { setMediaType } from './features/currentGenreOrCategory.js';
 import { Actors, Approved, Layout, MovieInformation, Movies, NotFound, Profile, TvShowInformation } from './Pages/index.js';
 import NavigationScroll from './utils/NavigationScroll.jsx';
+import { useGlobalNotice } from './utils/notify.js';
 
 // Movie and TV pages set which kind of title the navbar browses; other pages keep the last one
 function getRouteMediaType(pathname) {
@@ -22,6 +23,7 @@ function App() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const routeMediaType = getRouteMediaType(pathname);
+  const [notice, setNotice] = useGlobalNotice();
 
   useEffect(() => {
     if (routeMediaType) dispatch(setMediaType(routeMediaType));
@@ -48,6 +50,7 @@ function App() {
         </Layout>
       </NavigationScroll>
       <Footer />
+      <Notice notice={notice} onClose={() => setNotice(null)} />
     </Box>
   </>;
 }

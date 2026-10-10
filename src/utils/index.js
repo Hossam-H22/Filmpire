@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL, API_TMDB_KEY } from "./constants.js";
+import { showNotice } from "./notify.js";
 
 export const moviesApi = axios.create({
     baseURL: API_BASE_URL,
@@ -25,17 +26,17 @@ export const clearAuth = () => {
 export const fetchToken = async () => {
     try {
         const { data } = await moviesApi.get('/authentication/token/new');
-        if (data.success) {
-            // Drop any old (possibly expired) session so it can't be reused after the new approval
-            clearAuth();
-            localStorage.setItem(REQUEST_TOKEN_KEY, data.request_token);
-            // Remember the page the user logged in from, to come back to it after /approved
-            const { pathname, search, hash } = window.location;
-            localStorage.setItem(RETURN_TO_KEY, `${pathname}${search}${hash}`);
-            window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${window.location.origin}/approved`;
-        }
+        if (!data.success) throw new Error(data.status_message);
+
+        // Drop any old (possibly expired) session so it can't be reused after the new approval
+        clearAuth();
+        localStorage.setItem(REQUEST_TOKEN_KEY, data.request_token);
+        // Remember the page the user logged in from, to come back to it after /approved
+        const { pathname, search, hash } = window.location;
+        localStorage.setItem(RETURN_TO_KEY, `${pathname}${search}${hash}`);
+        window.location.href = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${window.location.origin}/approved`;
     } catch (error) {
-        console.log('Sorry, your token could not be created.');
+        showNotice({ severity: 'error', message: "Couldn't reach TMDB to start the login. Try again in a moment." });
     }
 }
 
