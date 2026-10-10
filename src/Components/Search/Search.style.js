@@ -4,10 +4,11 @@ export default makeStyles((theme) => ({
     searchContainer: {
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
+        gap: 4,
         height: 38,
         width: 260,
-        padding: '0 14px',
+        margin: 0,
+        padding: '0 6px',
         borderRadius: 999,
         background: theme.palette.raised,
         border: `1px solid ${theme.palette.divider}`,
@@ -20,6 +21,9 @@ export default makeStyles((theme) => ({
     fullWidth: {
         width: '100%',
     },
+    iconButton: {
+        padding: '5px !important',
+    },
     icon: {
         fontSize: '18px !important',
         color: theme.palette.text.secondary,
@@ -29,5 +33,13 @@ export default makeStyles((theme) => ({
         minWidth: 0,
         fontSize: '14px !important',
         color: `${theme.palette.text.primary} !important`,
+        // iOS zooms into inputs below 16px
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '16px !important',
+        },
+        // The clear button replaces the browser's own
+        '& input::-webkit-search-cancel-button': {
+            WebkitAppearance: 'none',
+        },
     },
 }));
