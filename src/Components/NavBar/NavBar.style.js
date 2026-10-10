@@ -18,44 +18,13 @@ export default makeStyles((theme) => ({
             gap: 12,
         },
     },
-    links: {
-        display: 'flex',
-        gap: 4,
-        minWidth: 0,
-        overflowX: 'auto',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar': {
-            display: 'none',
-        },
-    },
-    link: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 2,
-        padding: '8px 12px',
-        borderRadius: 8,
-        border: 0,
-        background: 'none',
-        font: 'inherit',
-        fontWeight: 600,
-        fontSize: 14,
-        whiteSpace: 'nowrap',
-        cursor: 'pointer',
-        color: theme.palette.text.secondary,
-        '&:hover': {
-            color: theme.palette.text.primary,
-            background: theme.palette.raised,
-        },
-    },
-    linkActive: {
-        color: theme.palette.text.primary,
-        background: theme.palette.raised,
-    },
-    genresMenu: {
-        maxHeight: 420,
+    menu: {
         minWidth: 200,
         border: `1px solid ${theme.palette.divider}`,
         backgroundImage: 'none !important',
+    },
+    mobileSearch: {
+        paddingBottom: 12,
     },
     right: {
         marginLeft: 'auto',

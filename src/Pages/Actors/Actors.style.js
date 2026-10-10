@@ -80,7 +80,7 @@ export default makeStyles((theme) => ({
         font: 'inherit',
         fontWeight: 700,
         cursor: 'pointer',
-        color: theme.palette.primary.main,
+        color: theme.palette.accent,
     },
     actions: {
         display: 'flex',

@@ -4,6 +4,7 @@ export default makeStyles((theme) => ({
     section: {
         paddingTop: 28,
         transition: 'opacity 0.2s',
+        scrollMarginTop: 64,
     },
     searchTypes: {
         marginBottom: 24,
@@ -16,5 +17,9 @@ export default makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         gap: 6,
+        alignItems: 'center',
+    },
+    emptyButton: {
+        marginTop: '12px !important',
     },
 }));

@@ -2,13 +2,12 @@ import { Language, PlayArrow, Star } from '@mui/icons-material';
 import { Box, Button, Chip, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Helmet } from "react-helmet";
-import { useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { ActorCard, CollapseLine, Loader, MovieList, Notice, PageContainer, SavedListButtons, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
+import { ActorCard, CollapseLine, DetailSkeleton, ErrorState, Loader, MovieList, PageContainer, pickTrailers, SavedListButtons, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
-import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
 import { useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
+import { browseUrl } from './../../utils/browse.js';
 import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
 import { formatDate, formatRuntime } from './../../utils/format.js';
 import useSavedLists from './../../utils/useSavedLists.js';
@@ -17,11 +16,12 @@ import useStyles from './MovieInformation.style.js';
 
 export default function MovieInformation() {
     const classes = useStyles();
-    const dispatch = useDispatch();
     const [isMovieLoading, setIsMovieLoading] = useState(true);
+    const [isWatchOpen, setIsWatchOpen] = useState(false);
     const { id } = useParams();
 
-    const { data, isFetching, error } = useGetMovieQuery(id);
+    // currentData is only ever this movie's, so another movie's page never shows while this one loads
+    const { currentData: data, isFetching, error, refetch } = useGetMovieQuery(id);
     const { data: recommendations } = useGetRecommendationsQuery({ list: 'recommendations', movie_id: id });
     const savedLists = useSavedLists('movie', id);
     const watchLink = useWatchLink(id, data?.release_date);
@@ -39,20 +39,27 @@ export default function MovieInformation() {
         setIsMovieLoading(true);
     }, [selectedServerUrl]);
 
+    useEffect(() => {
+        setIsWatchOpen(false);
+    }, [id]);
+
     function formatMoney(amount) {
         if (!amount) return '—';
         return amount >= 1e9 ? `$${(amount / 1e9).toFixed(2)}B` : `$${(amount / 1e6).toFixed(1)}M`;
     }
 
 
-    if (isFetching) return <Loader size='8rem' />
+    if (!data && isFetching) return <DetailSkeleton />
 
-    if (error) return <NotFound message='Something has gone wrong - Go back' path='/' />
+    if (error?.status === 404) return <NotFound message="We couldn't find that movie - Back to movies" path='/' />
+
+    if (error || !data) return <ErrorState title="We couldn't load this movie" onRetry={refetch} />
 
     const year = data?.release_date?.split('-')[0];
     const director = data?.credits?.crew?.find((member) => member?.job === 'Director')?.name;
     const cast = data?.credits?.cast?.slice(0, 15).filter((character) => character?.profile_path);
-    const trailers = data?.videos?.results?.slice(0, 10);
+    const trailers = pickTrailers(data?.videos);
+    const canWatch = watchLink.status === 'available';
     const facts = [
         { label: 'Released', value: formatDate(data?.release_date) },
         { label: 'Runtime', value: data?.runtime ? `${data.runtime} min` : '—' },
@@ -66,9 +73,14 @@ export default function MovieInformation() {
         document.getElementById('trailers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    function watchNow() {
+        setIsWatchOpen(true);
+        document.getElementById('watch')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     return <>
         <Helmet>
-            <title>{data?.title} | {SYSTEM_NAME}</title>
+            <title>{`${data?.title} | ${SYSTEM_NAME}`}</title>
             <meta name="description" content={data?.overview} />
             <meta name="keywords" content={data?.genres?.map((genre) => genre?.name).join(', ')} />
             <meta name="image" content={`${IMAGE_BASE_LINK}/${data?.poster_path}`} />
@@ -83,21 +95,19 @@ export default function MovieInformation() {
             <meta name="twitter:image" content={`${IMAGE_BASE_LINK}/${data?.poster_path}`} />
             <link rel="canonical" href={window.location.href} />
             <script type="application/ld+json">
-                {`
-                    {
-                        "@context": "https://schema.org",
-                        "@type": "Movie",
-                        "name": "${data.title}",
-                        "description": "${data.overview}",
-                        "image": "${IMAGE_BASE_LINK}/${data?.poster_path}",
-                        "datePublished": "${data.release_date}",
-                        "aggregateRating": {
-                            "@type": "AggregateRating",
-                            "ratingValue": "${data.vote_average}",
-                            "ratingCount": "${data.vote_count}"
-                        }
-                    }
-            `}
+                {JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'Movie',
+                    name: data?.title,
+                    description: data?.overview,
+                    image: `${IMAGE_BASE_LINK}/${data?.poster_path}`,
+                    datePublished: data?.release_date,
+                    aggregateRating: {
+                        '@type': 'AggregateRating',
+                        ratingValue: data?.vote_average,
+                        ratingCount: data?.vote_count,
+                    },
+                })}
             </script>
         </Helmet>
         <Box component='section' className={classes.hero}>
@@ -128,24 +138,29 @@ export default function MovieInformation() {
                                 key={genre?.id}
                                 label={genre?.name}
                                 component={Link}
-                                to='/'
+                                to={browseUrl('movie', { genre: genre?.id })}
                                 clickable
                                 variant='outlined'
                                 className={classes.genreChip}
-                                onClick={() => dispatch(selectGenreOrCategory(genre?.id))}
                             />
                         ))}
                     </div>
                     <div className={classes.actions}>
-                        {trailers?.length > 0 && <Button variant='contained' startIcon={<PlayArrow />} onClick={scrollToTrailers}>Trailer</Button>}
+                        {canWatch && <Button variant='contained' startIcon={<PlayArrow />} onClick={watchNow}>Watch now</Button>}
+                        {trailers.length > 0 && <Button
+                            variant={canWatch ? 'text' : 'contained'}
+                            className={canWatch ? classes.ghost : ''}
+                            startIcon={<PlayArrow />}
+                            onClick={scrollToTrailers}
+                        >Trailer</Button>}
                         <SavedListButtons savedLists={savedLists} className={classes.ghost} activeClassName={classes.ghostOn} />
-                        <Button
+                        {data?.imdb_id && <Button
                             className={classes.ghost}
                             target='_blank'
                             rel='noopener noreferrer'
                             href={`https://www.imdb.com/title/${data?.imdb_id}`}
                             endIcon={<Language />}
-                        >IMDb</Button>
+                        >IMDb</Button>}
                         {data?.homepage && <Button
                             className={classes.ghost}
                             target='_blank'
@@ -165,6 +180,45 @@ export default function MovieInformation() {
                         <SectionHeader title='Overview' />
                         <p className={classes.prose}>{data?.overview}</p>
                     </section>
+                    <div className={classes.anchor} id='watch'>
+                        <CollapseLine
+                            title='Watch now'
+                            unmountOnExit
+                            open={isWatchOpen}
+                            onOpenChange={setIsWatchOpen}
+                            disabled={!canWatch}
+                            badge={watchLink.status === 'checking' ? (
+                                <Chip size='small' variant='outlined' label='Checking availability…' icon={<CircularProgress size={12} color='inherit' />} />
+                            ) : watchLink.status === 'unavailable' && (
+                                <Chip size='small' color='warning' variant='outlined' label="This movie isn't available to watch right now" />
+                            )}
+                        >
+                            {watchLink.servers.length > 1 && <Box sx={{ mb: 2 }}>
+                                <Tabs
+                                    label='Watch servers'
+                                    tabs={watchLink.servers.map((server) => ({ label: server.name, value: server.url }))}
+                                    value={selectedServer?.url}
+                                    onChange={setSelectedServerUrl}
+                                />
+                            </Box>}
+                            <Box sx={{ position: 'relative' }}>
+                                {isMovieLoading && <div className={classes.movieLoader} >
+                                    <Loader size='4rem' removeMargin />
+                                </div>}
+                                {selectedServer && <iframe
+                                    key={selectedServer.url}
+                                    autoPlay
+                                    title='Movie'
+                                    src={selectedServer.url}
+                                    allow='autoplay'
+                                    allowFullScreen
+                                    scrolling="no"
+                                    onLoad={() => setIsMovieLoading(false)}
+                                    className={classes.player}
+                                />}
+                            </Box>
+                        </CollapseLine>
+                    </div>
                     {cast?.length > 0 && <section>
                         <SectionHeader title='Top cast' />
                         <div className={classes.cast}>
@@ -173,7 +227,7 @@ export default function MovieInformation() {
                             ))}
                         </div>
                     </section>}
-                    {trailers?.length > 0 && <section id='trailers' className={classes.anchor}>
+                    {trailers.length > 0 && <section id='trailers' className={classes.anchor}>
                         <SectionHeader title='Trailers' />
                         <div className={classes.trailers}>
                             {trailers.map((video) => (
@@ -181,41 +235,6 @@ export default function MovieInformation() {
                             ))}
                         </div>
                     </section>}
-                    <CollapseLine
-                        title='Watch now'
-                        unmountOnExit
-                        disabled={watchLink.status !== 'available'}
-                        badge={watchLink.status === 'checking' ? (
-                            <Chip size='small' variant='outlined' label='Checking availability…' icon={<CircularProgress size={12} color='inherit' />} />
-                        ) : watchLink.status === 'unavailable' && (
-                            <Chip size='small' color='warning' variant='outlined' label='Watching movie not available right now' />
-                        )}
-                    >
-                        {watchLink.servers.length > 1 && <Box sx={{ mb: 2 }}>
-                            <Tabs
-                                label='Watch servers'
-                                tabs={watchLink.servers.map((server) => ({ label: server.name, value: server.url }))}
-                                value={selectedServer?.url}
-                                onChange={setSelectedServerUrl}
-                            />
-                        </Box>}
-                        <Box sx={{ position: 'relative' }}>
-                            {isMovieLoading && <div className={classes.movieLoader} >
-                                <Loader size='4rem' removeMargin />
-                            </div>}
-                            {selectedServer && <iframe
-                                key={selectedServer.url}
-                                autoPlay
-                                title='Movie'
-                                src={selectedServer.url}
-                                allow='autoplay'
-                                allowFullScreen
-                                scrolling="no"
-                                onLoad={() => setIsMovieLoading(false)}
-                                className={classes.player}
-                            />}
-                        </Box>
-                    </CollapseLine>
                 </div>
 
                 <aside className={classes.aside}>
@@ -243,7 +262,5 @@ export default function MovieInformation() {
                 <MovieList movies={recommendations} numberOfMovies={12} variant='rail' />
             </section>}
         </PageContainer>
-
-        <Notice notice={savedLists.notice} onClose={() => savedLists.setNotice(null)} />
     </>
 }

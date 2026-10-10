@@ -41,7 +41,15 @@ export default function FeaturedMovie({ movie, eyebrow, mediaType }) {
                 {genreNames?.length > 0 && <><span className={classes.dot} /><span>{genreNames.join(' · ')}</span></>}
             </div>
             <p className={classes.overview}>{movie?.overview}</p>
-            <Button variant='contained' component={Link} to={`/${type}/${movie?.id}`}>
+            {/* Its link covers the whole banner (see moreInfo), so any click on it opens the details page */}
+            <Button
+                variant='contained'
+                component={Link}
+                to={`/${type}/${movie?.id}`}
+                className={classes.moreInfo}
+                aria-label={`More info about ${title}`}
+                disableRipple
+            >
                 More info
             </Button>
         </PageContainer>

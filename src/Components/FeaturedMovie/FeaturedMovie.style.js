@@ -33,7 +33,7 @@ export const heroStyles = (theme) => ({
         fontSize: 12,
         textTransform: 'uppercase',
         letterSpacing: '0.16em',
-        color: theme.palette.primary.main,
+        color: theme.palette.accent,
         '&::before': {
             content: '""',
             width: 24,
@@ -74,26 +74,51 @@ export const heroStyles = (theme) => ({
 
 export default makeStyles((theme) => ({
     ...heroStyles(theme),
+    hero: {
+        ...heroStyles(theme).hero,
+        '&:hover $backdrop': {
+            transform: 'scale(1.03)',
+        },
+    },
+    backdrop: {
+        ...heroStyles(theme).backdrop,
+        transition: 'transform 0.6s ease',
+    },
+    // Stretched link: the button's ::after fills the hero, its nearest positioned ancestor
+    moreInfo: {
+        position: 'static !important',
+        // The ripple is off, so keyboard focus needs its own ring
+        '&.Mui-focusVisible, &:focus-visible': {
+            outline: `2px solid ${theme.palette.primary.main}`,
+            outlineOffset: 3,
+        },
+        '&::after': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+        },
+    },
+    // Kept short so the first row of the list shows on a laptop screen
     content: {
-        paddingTop: 'clamp(56px, 9vw, 120px)',
-        paddingBottom: 40,
+        paddingTop: 'clamp(40px, 6vw, 80px)',
+        paddingBottom: 28,
     },
     title: {
         fontFamily: theme.fonts.display,
         fontWeight: 400,
-        fontSize: 'clamp(52px, 10vw, 120px)',
+        fontSize: 'clamp(44px, 6.5vw, 84px)',
         lineHeight: 0.95,
         letterSpacing: '0.02em',
-        maxWidth: '12ch',
+        maxWidth: '16ch',
         textWrap: 'balance',
-        margin: '14px 0 12px',
+        margin: '12px 0 10px',
     },
     overview: {
         maxWidth: '56ch',
         fontSize: 16,
-        margin: '18px 0 26px',
+        margin: '14px 0 22px',
         display: '-webkit-box',
-        WebkitLineClamp: 4,
+        WebkitLineClamp: 3,
         WebkitBoxOrient: 'vertical',
         overflow: 'hidden',
     },

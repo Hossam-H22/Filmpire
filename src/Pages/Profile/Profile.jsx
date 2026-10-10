@@ -1,6 +1,6 @@
 import { ExitToApp } from '@mui/icons-material';
 import { Avatar, Button, Chip, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { Loader, MovieList, PageContainer, Pagination, Tabs } from './../../Comp
 import avater from './../../assests/avatar-profile.jpg';
 import { userSelector } from './../../features/auth.js';
 import { useGetListQuery } from './../../services/TMDB.js';
-import { TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
+import { SYSTEM_NAME, TMDB_AVATAR_BASE_URL } from './../../utils/constants.js';
 import { fetchToken, logout } from './../../utils/index.js';
 import useStyles from './Profile.style.js';
 
@@ -21,6 +21,7 @@ const LIST_TYPES = [
 export default function Profile() {
     const classes = useStyles();
     const { user, sessionId, isAuthenticated, isLoading } = useSelector(userSelector);
+    const listTop = useRef(null);
     const [activeTab, setActiveTab] = useState('favorite');
     const [listType, setListType] = useState('movies');
     // Page of each list, keyed by TMDB list name such as 'favorite/tv'
@@ -58,7 +59,7 @@ export default function Profile() {
 
     return <>
         <Helmet>
-            <title>Profile</title>
+            <title>{`My Library | ${SYSTEM_NAME}`}</title>
         </Helmet>
         <section className={classes.header}>
             <PageContainer className={classes.headerContent}>
@@ -82,7 +83,7 @@ export default function Profile() {
         </section>
 
         <PageContainer>
-            <div className={classes.tabs}>
+            <div className={classes.tabs} ref={listTop}>
                 <Tabs
                     label='My lists'
                     value={activeTab}
@@ -111,6 +112,7 @@ export default function Profile() {
                     curruntPage={page}
                     setPage={(nextPage) => setPages((prev) => ({ ...prev, [activeListName]: nextPage }))}
                     totalPages={list?.total_pages}
+                    scrollTarget={listTop}
                 />
             </> : (
                 <div className={classes.empty}>

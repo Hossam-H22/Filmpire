@@ -1,16 +1,14 @@
 import alanBtn from '@alan-ai/alan-sdk-web';
 import { useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectGenreOrCategory } from '../features/currentGenreOrCategory.js';
 import { ColorModeContext } from '../utils/ToggoleColorMode.jsx';
+import { browseUrl } from '../utils/browse.js';
 import { fetchToken, logout } from '../utils/index.js';
 
 
 export default function useAlan() {
     const { setMode } = useContext(ColorModeContext);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     useEffect(() => {
         alanBtn({
@@ -20,18 +18,16 @@ export default function useAlan() {
                 if (command === 'chooseGenre') {
                     const foundGenre = genres?.find((g) => g?.name?.toLowerCase() === genreOrCategory?.toLowerCase());
                     if (foundGenre) {
-                        dispatch(selectGenreOrCategory(foundGenre?.id));
-                        navigate('/');
+                        navigate(browseUrl('movie', { genre: foundGenre?.id }));
                     }
                     else {
                         const categoryName = genreOrCategory?.startsWith('top') ? 'top_rated' : genreOrCategory;
-                        dispatch(selectGenreOrCategory(categoryName));
-                        navigate('/');
+                        navigate(browseUrl('movie', { category: categoryName }));
                     }
                 }
                 else if (command === 'search') {
                     console.log(query);
-                    navigate(query ? `/?s=${encodeURIComponent(query)}` : '/');
+                    navigate(browseUrl('movie', { s: query }));
                 }
                 else if (command === 'changeMode') {
                     (mode === 'light') ? setMode('light') : setMode('dark');

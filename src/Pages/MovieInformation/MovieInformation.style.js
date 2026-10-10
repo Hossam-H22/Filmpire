@@ -38,7 +38,7 @@ export default makeStyles((theme) => ({
     title: {
         fontFamily: theme.fonts.display,
         fontWeight: 400,
-        fontSize: 'clamp(48px, 8vw, 104px)',
+        fontSize: 'clamp(44px, 6.5vw, 88px)',
         lineHeight: 0.95,
         letterSpacing: '0.02em',
         textWrap: 'balance',
@@ -73,8 +73,8 @@ export default makeStyles((theme) => ({
         },
     },
     ghostOn: {
-        color: `${theme.palette.primary.main} !important`,
-        borderColor: `${theme.palette.primary.main} !important`,
+        color: `${theme.palette.accent} !important`,
+        borderColor: `${theme.palette.accent} !important`,
     },
     twoCol: {
         display: 'grid',
