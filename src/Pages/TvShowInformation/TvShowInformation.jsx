@@ -2,13 +2,12 @@ import { Language, NavigateBefore, NavigateNext, NotificationsNone, PlayArrow, S
 import { Box, Button, Chip, CircularProgress, MenuItem, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { ActorCard, CollapseLine, Loader, MovieList, Notice, PageContainer, SavedListButtons, SeasonsAndEpisodes, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
+import { ActorCard, CollapseLine, DetailSkeleton, ErrorState, Loader, MovieList, PageContainer, pickTrailers, SavedListButtons, SeasonsAndEpisodes, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
-import { selectGenreOrCategory } from './../../features/currentGenreOrCategory.js';
 import { useGetRecommendationsQuery, useGetSeasonQuery, useGetTvShowQuery } from './../../services/TMDB.js';
+import { browseUrl } from './../../utils/browse.js';
 import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
 import { episodeCode, formatDate, formatRuntime, hasAired, pad } from './../../utils/format.js';
 import useSavedLists from './../../utils/useSavedLists.js';
@@ -25,7 +24,6 @@ function daysUntil(airDate) {
 
 export default function TvShowInformation() {
     const classes = { ...useMovieStyles(), ...useTvStyles() };
-    const dispatch = useDispatch();
     const { id } = useParams();
     const [isEpisodeLoading, setIsEpisodeLoading] = useState(true);
     const [isWatchOpen, setIsWatchOpen] = useState(false);
@@ -34,7 +32,8 @@ export default function TvShowInformation() {
     const [browsedSeason, setBrowsedSeason] = useState(null);
     const [selectedServerBase, setSelectedServerBase] = useState(null);
 
-    const { data, isFetching, error } = useGetTvShowQuery(id);
+    // currentData is only ever this show's, so another show's page never shows while this one loads
+    const { currentData: data, isFetching, error, refetch } = useGetTvShowQuery(id);
     const { data: recommendations } = useGetRecommendationsQuery({ mediaType: 'tv', list: 'recommendations', movie_id: id });
     const savedLists = useSavedLists('tv', id);
     const watchLink = useWatchLink(id, data?.first_air_date, 'tv');
@@ -91,9 +90,11 @@ export default function TvShowInformation() {
         else playEpisode(nextSeason.season_number, 1);
     }
 
-    if (isFetching) return <Loader size='8rem' />
+    if (!data && isFetching) return <DetailSkeleton />
 
-    if (error) return <NotFound message='Something has gone wrong - Go back' path='/tv' />
+    if (error?.status === 404) return <NotFound message="We couldn't find that show - Back to TV shows" path='/tv' />
+
+    if (error || !data) return <ErrorState title="We couldn't load this show" onRetry={refetch} homePath='/tv' />
 
     const firstYear = data?.first_air_date?.split('-')[0];
     const lastYear = data?.last_air_date?.split('-')[0];
@@ -102,7 +103,7 @@ export default function TvShowInformation() {
     const episodeRuntime = data?.episode_run_time?.[0] ?? data?.last_episode_to_air?.runtime;
     const network = data?.networks?.[0]?.name;
     const cast = data?.credits?.cast?.slice(0, 15).filter((character) => character?.profile_path);
-    const trailers = data?.videos?.results?.slice(0, 10);
+    const trailers = pickTrailers(data?.videos);
     const nextEpisode = data?.next_episode_to_air;
     const imdbId = data?.external_ids?.imdb_id;
     const facts = [
@@ -122,7 +123,7 @@ export default function TvShowInformation() {
 
     return <>
         <Helmet>
-            <title>{data?.name} | {SYSTEM_NAME}</title>
+            <title>{`${data?.name} | ${SYSTEM_NAME}`}</title>
             <meta name="description" content={data?.overview} />
             <meta name="keywords" content={data?.genres?.map((genre) => genre?.name).join(', ')} />
             <meta property="og:title" content={data?.name} />
@@ -184,11 +185,10 @@ export default function TvShowInformation() {
                                 key={genre?.id}
                                 label={genre?.name}
                                 component={Link}
-                                to='/tv'
+                                to={browseUrl('tv', { genre: genre?.id })}
                                 clickable
                                 variant='outlined'
                                 className={classes.genreChip}
-                                onClick={() => dispatch(selectGenreOrCategory(genre?.id))}
                             />
                         ))}
                     </div>
@@ -196,7 +196,7 @@ export default function TvShowInformation() {
                         {watchLink.status === 'available' && current && <Button variant='contained' startIcon={<PlayArrow />} onClick={() => playEpisode(current.season, current.episode)}>
                             Watch {episodeCode(current.season, current.episode)}
                         </Button>}
-                        {trailers?.length > 0 && <Button
+                        {trailers.length > 0 && <Button
                             variant={watchLink.status === 'available' ? 'text' : 'contained'}
                             className={watchLink.status === 'available' ? classes.ghost : ''}
                             startIcon={<PlayArrow />}
@@ -238,22 +238,6 @@ export default function TvShowInformation() {
                         canPlay={watchLink.status === 'available'}
                         onPlay={playEpisode}
                     />}
-                    {cast?.length > 0 && <section>
-                        <SectionHeader title='Top cast' />
-                        <div className={classes.cast}>
-                            {cast.map((character) => (
-                                <ActorCard character={character} key={character?.credit_id ?? character?.id} />
-                            ))}
-                        </div>
-                    </section>}
-                    {trailers?.length > 0 && <section id='trailers' className={classes.anchor}>
-                        <SectionHeader title='Trailers' />
-                        <div className={classes.trailers}>
-                            {trailers.map((video) => (
-                                <TrailerCard video={video} key={video.id} />
-                            ))}
-                        </div>
-                    </section>}
                     <div className={classes.anchor} id='watch'>
                         <CollapseLine
                             title='Watch now'
@@ -264,7 +248,7 @@ export default function TvShowInformation() {
                             badge={watchLink.status === 'checking' ? (
                                 <Chip size='small' variant='outlined' label='Checking availability…' icon={<CircularProgress size={12} color='inherit' />} />
                             ) : watchLink.status === 'unavailable' && (
-                                <Chip size='small' color='warning' variant='outlined' label='Watching this show is not available right now' />
+                                <Chip size='small' color='warning' variant='outlined' label="This show isn't available to watch right now" />
                             )}
                         >
                             {current && <div className={classes.watchBody}>
@@ -333,6 +317,22 @@ export default function TvShowInformation() {
                             </div>}
                         </CollapseLine>
                     </div>
+                    {cast?.length > 0 && <section>
+                        <SectionHeader title='Top cast' />
+                        <div className={classes.cast}>
+                            {cast.map((character) => (
+                                <ActorCard character={character} key={character?.credit_id ?? character?.id} />
+                            ))}
+                        </div>
+                    </section>}
+                    {trailers.length > 0 && <section id='trailers' className={classes.anchor}>
+                        <SectionHeader title='Trailers' />
+                        <div className={classes.trailers}>
+                            {trailers.map((video) => (
+                                <TrailerCard video={video} key={video.id} />
+                            ))}
+                        </div>
+                    </section>}
                 </div>
 
                 <aside className={classes.aside}>
@@ -370,7 +370,5 @@ export default function TvShowInformation() {
                 <MovieList movies={recommendations} numberOfMovies={12} variant='rail' mediaType='tv' />
             </section>}
         </PageContainer>
-
-        <Notice notice={savedLists.notice} onClose={() => savedLists.setNotice(null)} />
     </>
 }
