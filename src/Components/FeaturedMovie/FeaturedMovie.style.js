@@ -87,6 +87,11 @@ export default makeStyles((theme) => ({
     // Stretched link: the button's ::after fills the hero, its nearest positioned ancestor
     moreInfo: {
         position: 'static !important',
+        // The ripple is off, so keyboard focus needs its own ring
+        '&.Mui-focusVisible, &:focus-visible': {
+            outline: `2px solid ${theme.palette.primary.main}`,
+            outlineOffset: 3,
+        },
         '&::after': {
             content: '""',
             position: 'absolute',
