@@ -62,6 +62,11 @@ export const tmdbApi = createApi({
                 `/account/${accountId}/${listName}?page=${page}&session_id=${sessionId}&api_key=${API_TMDB_KEY}`
         }),
 
+        //* Whether the user has one movie or TV show in their favorites and watchlist, however long the lists are
+        getAccountStates: builder.query({
+            query: ({ mediaType, id, sessionId }) => `/${mediaType}/${id}/account_states?session_id=${sessionId}&api_key=${API_TMDB_KEY}`,
+        }),
+
         getRecommendations: builder.query({
             query: ({ mediaType = 'movie', movie_id, list }) => `/${mediaType}/${movie_id}/${list}?api_key=${API_TMDB_KEY}`,
         }),
@@ -86,6 +91,7 @@ export const {
     useGetTvShowQuery,
     useGetSeasonQuery,
     useGetListQuery,
+    useGetAccountStatesQuery,
     useGetRecommendationsQuery,
     useGetActorsDetailsQuery,
     useGetActorCreditsQuery,
