@@ -1,13 +1,14 @@
 import { ArrowBack, Language } from '@mui/icons-material';
 import { Box, Button } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Loader, MovieList, PageContainer, Pagination, SectionHeader, Tabs } from './../../Components/index.js';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { DetailSkeleton, ErrorState, MovieList, PageContainer, Pagination, SectionHeader, Tabs } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
 import { useGetActorCreditsQuery, useGetActorsDetailsQuery } from './../../services/TMDB.js';
-import { IMAGE_BASE_LINK } from './../../utils/constants.js';
+import { IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
+import { formatDate } from './../../utils/format.js';
 import useStyles from './Actors.style.js';
 
 const LONG_BIOGRAPHY = 700;
@@ -41,14 +42,31 @@ export default function Actors() {
     const classes = useStyles();
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const filmography = useRef(null);
     const [page, setPage] = useState(1);
     const [creditType, setCreditType] = useState('all');
     const [showFullBio, setShowFullBio] = useState(false);
-    const { data, isFetching, error } = useGetActorsDetailsQuery(id);
-    const { data: credits } = useGetActorCreditsQuery(id);
+    // currentData is only ever this actor's, so another actor's page never shows while this one loads
+    const { currentData: data, isFetching, error, refetch } = useGetActorsDetailsQuery(id);
+    const { currentData: credits } = useGetActorCreditsQuery(id);
 
-    if (isFetching) return <Loader size='8rem' />
-    if (error) return <NotFound path={`/`} message='Something has gone wrong - Go back' />
+    // Another actor starts again from the first page of all credits
+    useEffect(() => {
+        setPage(1);
+        setCreditType('all');
+        setShowFullBio(false);
+    }, [id]);
+
+    // Back leaves the site when this page was opened directly, so go home instead
+    function goBack() {
+        if (location.key === 'default') navigate('/');
+        else navigate(-1);
+    }
+
+    if (!data && isFetching) return <DetailSkeleton />
+    if (error?.status === 404) return <NotFound message="We couldn't find that person - Back to home" />
+    if (error || !data) return <ErrorState title="We couldn't load this person" onRetry={refetch} />
 
     const allCredits = getUniqueCredits(credits?.cast);
     const movieCount = allCredits.filter((credit) => credit.media_type === 'movie').length;
@@ -66,15 +84,15 @@ export default function Actors() {
     const biography = data?.biography || 'Sorry, no biography yet...';
     const isLongBio = biography.length > LONG_BIOGRAPHY;
     const details = [
-        { label: 'Born', value: data?.birthday && new Date(data.birthday).toDateString() },
+        { label: 'Born', value: data?.birthday && formatDate(data.birthday) },
         { label: 'Place', value: data?.place_of_birth },
-        { label: 'Died', value: data?.deathday && new Date(data.deathday).toDateString() },
+        { label: 'Died', value: data?.deathday && formatDate(data.deathday) },
         { label: 'Popularity', value: data?.popularity?.toFixed(1) },
     ].filter(({ value }) => value);
 
     return <>
         <Helmet>
-            <title>Actor: {data?.name}</title>
+            <title>{`${data?.name} | ${SYSTEM_NAME}`}</title>
         </Helmet>
         <PageContainer className={classes.top}>
             <img
@@ -104,11 +122,11 @@ export default function Actors() {
                         href={`https://www.imdb.com/name/${data?.imdb_id}`}
                         endIcon={<Language />}
                     >IMDb</Button>}
-                    <Button startIcon={<ArrowBack />} onClick={() => navigate(-1)} color='inherit' variant='outlined'> Back </Button>
+                    <Button startIcon={<ArrowBack />} onClick={goBack} color='inherit' variant='outlined'> Back </Button>
                 </div>
             </div>
         </PageContainer>
-        {allCredits.length > 0 && <PageContainer component='section' sx={{ pt: 4 }}>
+        {allCredits.length > 0 && <PageContainer component='section' ref={filmography} sx={{ pt: 4, scrollMarginTop: 64 }}>
             <SectionHeader title='Filmography'>{shownCredits.length} credits · Page {page} of {totalPages}</SectionHeader>
             {movieCount > 0 && tvCount > 0 && <Box sx={{ mb: 3 }}>
                 <Tabs
@@ -123,7 +141,7 @@ export default function Actors() {
                 />
             </Box>}
             <MovieList movies={pageCredits} showType={creditType === 'all'} getSubtitle={getCreditSubtitle} />
-            <Pagination curruntPage={page} setPage={setPage} totalPages={totalPages} />
+            <Pagination curruntPage={page} setPage={setPage} totalPages={totalPages} scrollTarget={filmography} />
         </PageContainer>}
     </>
 }

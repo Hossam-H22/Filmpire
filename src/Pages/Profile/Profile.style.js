@@ -52,6 +52,7 @@ export default makeStyles((theme) => ({
         },
     },
     tabs: {
+        scrollMarginTop: 64,
         display: 'flex',
         flexDirection: 'column',
         gap: 16,
