@@ -74,26 +74,27 @@ export const heroStyles = (theme) => ({
 
 export default makeStyles((theme) => ({
     ...heroStyles(theme),
+    // Kept short so the first row of the list shows on a laptop screen
     content: {
-        paddingTop: 'clamp(56px, 9vw, 120px)',
-        paddingBottom: 40,
+        paddingTop: 'clamp(40px, 6vw, 80px)',
+        paddingBottom: 28,
     },
     title: {
         fontFamily: theme.fonts.display,
         fontWeight: 400,
-        fontSize: 'clamp(52px, 10vw, 120px)',
+        fontSize: 'clamp(44px, 6.5vw, 84px)',
         lineHeight: 0.95,
         letterSpacing: '0.02em',
-        maxWidth: '12ch',
+        maxWidth: '16ch',
         textWrap: 'balance',
-        margin: '14px 0 12px',
+        margin: '12px 0 10px',
     },
     overview: {
         maxWidth: '56ch',
         fontSize: 16,
-        margin: '18px 0 26px',
+        margin: '14px 0 22px',
         display: '-webkit-box',
-        WebkitLineClamp: 4,
+        WebkitLineClamp: 3,
         WebkitBoxOrient: 'vertical',
         overflow: 'hidden',
     },
