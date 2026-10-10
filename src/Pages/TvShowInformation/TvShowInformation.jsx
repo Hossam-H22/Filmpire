@@ -1,8 +1,8 @@
 import { Language, NavigateBefore, NavigateNext, NotificationsNone, PlayArrow, Star } from '@mui/icons-material';
 import { Box, Button, Chip, CircularProgress, MenuItem, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { ActorCard, CollapseLine, DetailSkeleton, ErrorState, Loader, MovieList, PageContainer, pickTrailers, SavedListButtons, SeasonsAndEpisodes, SectionHeader, Tabs, TrailerCard } from './../../Components/index.js';
 import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
@@ -25,10 +25,8 @@ function daysUntil(airDate) {
 export default function TvShowInformation() {
     const classes = { ...useMovieStyles(), ...useTvStyles() };
     const { id } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [isEpisodeLoading, setIsEpisodeLoading] = useState(true);
-    const [isWatchOpen, setIsWatchOpen] = useState(false);
-    // { season, episode } picked by the user; before that, the first episode
-    const [playing, setPlaying] = useState(null);
     const [browsedSeason, setBrowsedSeason] = useState(null);
     const [selectedServerBase, setSelectedServerBase] = useState(null);
 
@@ -42,7 +40,17 @@ export default function TvShowInformation() {
     // Specials (season 0) only show when a show has nothing else
     const regularSeasons = data?.seasons?.filter((season) => season?.season_number > 0 && season?.episode_count > 0) ?? [];
     const seasons = regularSeasons.length > 0 ? regularSeasons : (data?.seasons ?? []);
+    // The episode being watched lives in the URL (?season=2&episode=5) so the link can be shared.
+    // Without it the player is closed and the first episode is ready to play
+    const urlSeason = parseInt(searchParams.get('season'), 10);
+    const urlEpisode = parseInt(searchParams.get('episode'), 10);
+    const playing = seasons.some((season) => season?.season_number === urlSeason) && urlEpisode >= 1
+        ? { season: urlSeason, episode: urlEpisode }
+        : null;
+    const isWatchOpen = Boolean(playing);
     const current = playing ?? (seasons[0] ? { season: seasons[0].season_number, episode: 1 } : null);
+    // A shared episode link scrolls to the player once it can play
+    const scrollToPlayer = useRef(searchParams.has('episode'));
     const selectedSeason = browsedSeason ?? current?.season;
 
     const { data: currentSeason } = useGetSeasonQuery({ id, seasonNumber: current?.season }, { skip: !current });
@@ -55,12 +63,18 @@ export default function TvShowInformation() {
     const hasNext = current?.episode < airedEpisodes.length || hasAired(nextSeason?.air_date);
     const playerUrl = selectedServer && current && buildWatchUrl(selectedServer.baseUrl, { id, season: current.season, episode: current.episode });
 
-    // A new show starts from its first episode
+    // A new show starts browsing from the season being watched, or its first season
     useEffect(() => {
-        setPlaying(null);
         setBrowsedSeason(null);
-        setIsWatchOpen(false);
     }, [id]);
+
+    useEffect(() => {
+        if (!scrollToPlayer.current || !data || watchLink.status === 'checking') return;
+        scrollToPlayer.current = false;
+        if (isWatchOpen && watchLink.status === 'available') {
+            document.getElementById('watch')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [data, watchLink.status, isWatchOpen]);
 
     // Default to the first server that responds and keep it while slower ones finish checking
     useEffect(() => {
@@ -73,11 +87,17 @@ export default function TvShowInformation() {
         setIsEpisodeLoading(true);
     }, [playerUrl]);
 
-    function playEpisode(season, episode) {
-        setPlaying({ season, episode });
+    // Replaces the history entry, so Back leaves the show instead of stepping through episodes
+    function playEpisode(season, episode, { scroll = true } = {}) {
+        setSearchParams({ season, episode }, { replace: true });
         setBrowsedSeason(season);
-        setIsWatchOpen(true);
-        document.getElementById('watch')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (scroll) document.getElementById('watch')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Opening the player starts the ready episode; closing it takes the episode out of the URL
+    function setIsWatchOpen(open) {
+        if (open && current) playEpisode(current.season, current.episode, { scroll: false });
+        else if (!open) setSearchParams({}, { replace: true });
     }
 
     function playPrevious() {
@@ -123,7 +143,7 @@ export default function TvShowInformation() {
 
     return <>
         <Helmet>
-            <title>{`${data?.name} | ${SYSTEM_NAME}`}</title>
+            <title>{`${data?.name}${playing ? ` ${episodeCode(playing.season, playing.episode)}` : ''} | ${SYSTEM_NAME}`}</title>
             <meta name="description" content={data?.overview} />
             <meta name="keywords" content={data?.genres?.map((genre) => genre?.name).join(', ')} />
             <meta property="og:title" content={data?.name} />
@@ -135,7 +155,7 @@ export default function TvShowInformation() {
             <meta name="twitter:title" content={data?.name} />
             <meta name="twitter:description" content={data?.overview} />
             <meta name="twitter:image" content={`${IMAGE_BASE_LINK}/${data?.poster_path}`} />
-            <link rel="canonical" href={window.location.href} />
+            <link rel="canonical" href={`${window.location.origin}${window.location.pathname}`} />
             <script type="application/ld+json">
                 {JSON.stringify({
                     '@context': 'https://schema.org',
