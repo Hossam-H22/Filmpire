@@ -18,12 +18,9 @@ export default function CollapseLine({ title, unmountOnExit, disabled, badge, op
         onOpenChange?.(next);
     }
 
+    // A controlled parent keeps its own open state: it shows as closed while disabled and reopens after
     useEffect(() => {
-        if (disabled) {
-            setIsOpenState(false);
-            onOpenChange?.(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (disabled) setIsOpenState(false);
     }, [disabled]);
 
     const Icon = isOpen ? KeyboardArrowUpIcon : KeyboardArrowDownIcon;
