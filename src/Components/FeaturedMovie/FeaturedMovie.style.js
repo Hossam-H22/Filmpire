@@ -33,7 +33,7 @@ export const heroStyles = (theme) => ({
         fontSize: 12,
         textTransform: 'uppercase',
         letterSpacing: '0.16em',
-        color: theme.palette.primary.main,
+        color: theme.palette.accent,
         '&::before': {
             content: '""',
             width: 24,

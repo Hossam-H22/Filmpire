@@ -85,7 +85,7 @@ export default makeStyles((theme) => ({
         color: theme.palette.text.secondary,
     },
     official: {
-        color: theme.palette.primary.main,
-        borderColor: theme.palette.primary.main,
+        color: theme.palette.accent,
+        borderColor: theme.palette.accent,
     },
 }));

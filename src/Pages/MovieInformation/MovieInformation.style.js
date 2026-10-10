@@ -73,8 +73,8 @@ export default makeStyles((theme) => ({
         },
     },
     ghostOn: {
-        color: `${theme.palette.primary.main} !important`,
-        borderColor: `${theme.palette.primary.main} !important`,
+        color: `${theme.palette.accent} !important`,
+        borderColor: `${theme.palette.accent} !important`,
     },
     twoCol: {
         display: 'grid',

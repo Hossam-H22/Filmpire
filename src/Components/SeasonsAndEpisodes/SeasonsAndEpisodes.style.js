@@ -177,7 +177,7 @@ export default makeStyles((theme) => ({
         },
     },
     now: {
-        color: theme.palette.primary.main,
+        color: theme.palette.accent,
     },
     airs: {
         padding: '2px 7px',

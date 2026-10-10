@@ -12,9 +12,12 @@ export const FONTS = {
     mono: '"IBM Plex Mono", ui-monospace, Menlo, monospace',
 };
 
+// primary fills sit behind white text, so it stays at 4.5:1 or more against white.
+// accent is the brighter red for accent-colored text, at 4.5:1 or more against the background
 const PALETTES = {
     dark: {
-        primary: { main: '#ff3b5c', contrastText: '#ffffff' },
+        primary: { main: '#e0244a', contrastText: '#ffffff' },
+        accent: '#ff3b5c',
         background: { default: '#0c0b10', paper: '#16151d' },
         text: { primary: '#f3f1f6', secondary: '#9d99ad' },
         divider: '#2c2a38',
@@ -23,6 +26,7 @@ const PALETTES = {
     },
     light: {
         primary: { main: '#e0244a', contrastText: '#ffffff' },
+        accent: '#c41d3f',
         background: { default: '#f6f4f8', paper: '#ffffff' },
         text: { primary: '#16141c', secondary: '#625d72' },
         divider: '#dedae6',
