@@ -74,6 +74,25 @@ export const heroStyles = (theme) => ({
 
 export default makeStyles((theme) => ({
     ...heroStyles(theme),
+    hero: {
+        ...heroStyles(theme).hero,
+        '&:hover $backdrop': {
+            transform: 'scale(1.03)',
+        },
+    },
+    backdrop: {
+        ...heroStyles(theme).backdrop,
+        transition: 'transform 0.6s ease',
+    },
+    // Stretched link: the button's ::after fills the hero, its nearest positioned ancestor
+    moreInfo: {
+        position: 'static !important',
+        '&::after': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+        },
+    },
     // Kept short so the first row of the list shows on a laptop screen
     content: {
         paddingTop: 'clamp(40px, 6vw, 80px)',
