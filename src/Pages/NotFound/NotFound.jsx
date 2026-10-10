@@ -7,7 +7,8 @@ import notFound_light_img from './../../assests/404_Error_page_not_found.svg';
 import notFound_dark_img from './../../assests/404_Error_page_not_found_dark.svg';
 import useStyles from './NotFound.style.js';
 
-export default function NotFound({ path, message }) {
+// path and message: where the button leads and its label; by default, back to the home page
+export default function NotFound({ path = '/', message = 'Back to home' }) {
     const classes = useStyles();
     const theme = useTheme();
 
@@ -21,7 +22,7 @@ export default function NotFound({ path, message }) {
             />
         </Box>
         <Box className={classes.message}>
-            {message && <Button component={Link} to={path ?? '/'} className={classes.link} startIcon={<ArrowBack />} > {message} </Button>}
+            <Button component={Link} to={path} className={classes.link} startIcon={<ArrowBack />}>{message}</Button>
         </Box>
     </>
 }
