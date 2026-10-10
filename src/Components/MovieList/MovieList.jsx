@@ -4,18 +4,20 @@ import useStyles from './MovieList.style.js';
 
 // variant 'grid' wraps into rows; 'rail' is a single horizontally scrolling row.
 // mediaType, showType and getSubtitle(movie) are passed on to each MovieCard.
-export default function MovieList({ movies, numberOfMovies, excludeFirst, variant = 'grid', mediaType, showType, getSubtitle }) {
+// onPreview(movie) and onPreviewEnd() fire as a card is hovered or focused and left.
+export default function MovieList({ movies, numberOfMovies, variant = 'grid', mediaType, showType, getSubtitle, onPreview, onPreviewEnd }) {
     const classes = useStyles();
-    const startFrom = excludeFirst ? 1 : 0;
 
     return <div className={variant === 'rail' ? classes.rail : classes.grid}>
-        {movies?.results?.slice(startFrom, numberOfMovies)?.map((movie) => (
+        {movies?.results?.slice(0, numberOfMovies)?.map((movie) => (
             <MovieCard
                 key={`${movie?.media_type ?? mediaType}-${movie?.id}`}
                 movie={movie}
                 mediaType={mediaType}
                 showType={showType}
                 subtitle={getSubtitle?.(movie)}
+                onPreview={onPreview && (() => onPreview(movie))}
+                onPreviewEnd={onPreviewEnd}
             />
         ))}
     </div>

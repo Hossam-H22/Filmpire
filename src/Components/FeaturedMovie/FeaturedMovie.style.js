@@ -74,8 +74,14 @@ export const heroStyles = (theme) => ({
 
 export default makeStyles((theme) => ({
     ...heroStyles(theme),
+    // A fixed height, so the page below doesn't jump as titles with longer or shorter text rotate through
     hero: {
         ...heroStyles(theme).hero,
+        display: 'flex',
+        height: 480,
+        [theme.breakpoints.down('md')]: {
+            height: 440,
+        },
         '&:hover $backdrop': {
             transform: 'scale(1.03)',
         },
@@ -83,6 +89,25 @@ export default makeStyles((theme) => ({
     backdrop: {
         ...heroStyles(theme).backdrop,
         transition: 'transform 0.6s ease',
+    },
+    // The incoming slide's backdrop and text fade in over the outgoing one
+    backdropIn: {
+        animation: '$fadeIn 0.7s ease both',
+    },
+    slide: {
+        animation: '$riseIn 0.5s ease both',
+    },
+    '@keyframes fadeIn': {
+        from: { opacity: 0 },
+        to: { opacity: 1 },
+    },
+    '@keyframes riseIn': {
+        from: { opacity: 0, transform: 'translateY(8px)' },
+        to: { opacity: 1, transform: 'none' },
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+        backdropIn: { animation: 'none' },
+        slide: { animation: 'none' },
     },
     // Stretched link: the button's ::after fills the hero, its nearest positioned ancestor
     moreInfo: {
@@ -98,8 +123,13 @@ export default makeStyles((theme) => ({
             inset: 0,
         },
     },
-    // Kept short so the first row of the list shows on a laptop screen
+    // Kept short so the first row of the list shows on a laptop screen.
+    // The text sits at the bottom, so the More info button stays put from one title to the next
     content: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
         paddingTop: 'clamp(40px, 6vw, 80px)',
         paddingBottom: 28,
     },
@@ -112,6 +142,11 @@ export default makeStyles((theme) => ({
         maxWidth: '16ch',
         textWrap: 'balance',
         margin: '12px 0 10px',
+        // Two lines at most, so a long title can't push the banner past its height
+        display: '-webkit-box',
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: 'vertical',
+        overflow: 'hidden',
     },
     overview: {
         maxWidth: '56ch',
