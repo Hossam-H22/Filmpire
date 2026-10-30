@@ -24,6 +24,16 @@ export default makeStyles((theme) => ({
             color: theme.palette.text.primary,
         },
     },
+    badge: {
+        marginLeft: 8,
+        padding: '2px 6px',
+        borderRadius: 4,
+        border: `1px solid ${theme.palette.divider}`,
+        fontSize: 11,
+        fontWeight: 600,
+        verticalAlign: 'middle',
+        color: theme.palette.text.secondary,
+    },
     active: {
         color: theme.palette.text.primary,
         borderBottomColor: theme.palette.primary.main,

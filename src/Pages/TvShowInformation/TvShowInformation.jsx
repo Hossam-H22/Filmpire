@@ -8,7 +8,7 @@ import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
 import { useGetRecommendationsQuery, useGetSeasonQuery, useGetTvShowQuery } from './../../services/TMDB.js';
 import { browseUrl } from './../../utils/browse.js';
-import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
+import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME, UNSANDBOXED_SERVER_BADGE, WATCH_PLAYER_SANDBOX } from './../../utils/constants.js';
 import { episodeCode, formatDate, formatRuntime, hasAired, pad } from './../../utils/format.js';
 import useSavedLists from './../../utils/useSavedLists.js';
 import useWatchLink, { buildWatchUrl } from './../../utils/useWatchLink.js';
@@ -302,9 +302,13 @@ export default function TvShowInformation() {
                                         ))}
                                     </TextField>
                                 </div>
-                                {watchLink.servers.length > 1 && <Tabs
+                                {(watchLink.servers.length > 1 || watchLink.servers[0]?.isSandboxed === false) && <Tabs
                                     label='Watch servers'
-                                    tabs={watchLink.servers.map((server) => ({ label: server.name, value: server.baseUrl }))}
+                                    tabs={watchLink.servers.map((server) => ({
+                                        label: server.name,
+                                        value: server.baseUrl,
+                                        badge: !server.isSandboxed && UNSANDBOXED_SERVER_BADGE,
+                                    }))}
                                     value={selectedServer?.baseUrl}
                                     onChange={setSelectedServerBase}
                                 />}
@@ -316,7 +320,8 @@ export default function TvShowInformation() {
                                         key={playerUrl}
                                         title={`${data?.name} ${episodeCode(current.season, current.episode)}`}
                                         src={playerUrl}
-                                        allow='autoplay'
+                                        sandbox={selectedServer.isSandboxed ? WATCH_PLAYER_SANDBOX : undefined}
+                                        allow='autoplay; fullscreen'
                                         allowFullScreen
                                         scrolling="no"
                                         onLoad={() => setIsEpisodeLoading(false)}

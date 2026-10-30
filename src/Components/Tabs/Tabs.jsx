@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import useStyles from './Tabs.style.js';
 
-// Underlined text tabs: tabs = [{ label, value }].
+// Underlined text tabs: tabs = [{ label, value, badge? }]; badge is a short note shown after the label.
 // Only the selected tab is in the Tab order; arrow keys, Home and End move between tabs
 export default function Tabs({ tabs, value, onChange, label }) {
     const classes = useStyles();
@@ -36,6 +36,7 @@ export default function Tabs({ tabs, value, onChange, label }) {
                 onKeyDown={(e) => handleKeyDown(e, index)}
             >
                 {tab.label}
+                {tab.badge && <span className={classes.badge}>{tab.badge}</span>}
             </button>
         ))}
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MOVIE_WATCH_SERVERS, TV_WATCH_SERVERS } from './constants.js';
+import { MOVIE_WATCH_SERVERS, TV_WATCH_SERVERS, UNSANDBOXED_WATCH_HOSTS } from './constants.js';
 
 const PROBE_TIMEOUT_MS = 8000;
 
@@ -33,6 +33,16 @@ function getServerName(baseUrl, index) {
     }
 }
 
+// Servers listed in REACT_APP_UNSANDBOXED_WATCH_SERVERS (subdomains included) play without the sandbox
+function isSandboxed(baseUrl) {
+    try {
+        const hostname = new URL(baseUrl).hostname.replace(/^www\./, '');
+        return !UNSANDBOXED_WATCH_HOSTS.some((host) => hostname === host || hostname.endsWith(`.${host}`));
+    } catch (error) {
+        return true;
+    }
+}
+
 // Watch URL for a movie ({ id }) or a TV episode ({ id, season, episode }).
 // A base URL with {id}/{season}/{episode} placeholders is filled in; otherwise the values are appended as path segments.
 export function buildWatchUrl(baseUrl, params) {
@@ -45,7 +55,7 @@ export function buildWatchUrl(baseUrl, params) {
 // Checks every configured watch server for this movie or TV show in parallel.
 // TV servers are checked with the first episode; pick an episode later with buildWatchUrl(server.baseUrl, ...).
 // status: 'checking' (none working yet, some still pending) | 'available' | 'unavailable'
-// servers: the working servers, in .env order: [{ name, baseUrl, url }]
+// servers: the working servers, in .env order: [{ name, baseUrl, url, isSandboxed }]
 export default function useWatchLink(id, releaseDate, mediaType = 'movie') {
     const [result, setResult] = useState({ status: 'checking', servers: [] });
 
@@ -57,6 +67,7 @@ export default function useWatchLink(id, releaseDate, mediaType = 'movie') {
             name: getServerName(baseUrl, index),
             baseUrl,
             url: buildWatchUrl(baseUrl, isTv ? { id, season: 1, episode: 1 } : { id }),
+            isSandboxed: isSandboxed(baseUrl),
         }));
 
         if (!id || isUnreleased || candidates.length === 0) {

@@ -8,7 +8,7 @@ import { NotFound } from './../../Pages/index.js';
 import moviePoster from './../../assests/movie-poster.png';
 import { useGetMovieQuery, useGetRecommendationsQuery } from './../../services/TMDB.js';
 import { browseUrl } from './../../utils/browse.js';
-import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME } from './../../utils/constants.js';
+import { IMAGE_BACKDROP_BASE_LINK, IMAGE_BASE_LINK, SYSTEM_NAME, UNSANDBOXED_SERVER_BADGE, WATCH_PLAYER_SANDBOX } from './../../utils/constants.js';
 import { formatDate, formatRuntime } from './../../utils/format.js';
 import useSavedLists from './../../utils/useSavedLists.js';
 import useWatchLink from './../../utils/useWatchLink.js';
@@ -193,10 +193,14 @@ export default function MovieInformation() {
                                 <Chip size='small' color='warning' variant='outlined' label="This movie isn't available to watch right now" />
                             )}
                         >
-                            {watchLink.servers.length > 1 && <Box sx={{ mb: 2 }}>
+                            {(watchLink.servers.length > 1 || watchLink.servers[0]?.isSandboxed === false) && <Box sx={{ mb: 2 }}>
                                 <Tabs
                                     label='Watch servers'
-                                    tabs={watchLink.servers.map((server) => ({ label: server.name, value: server.url }))}
+                                    tabs={watchLink.servers.map((server) => ({
+                                        label: server.name,
+                                        value: server.url,
+                                        badge: !server.isSandboxed && UNSANDBOXED_SERVER_BADGE,
+                                    }))}
                                     value={selectedServer?.url}
                                     onChange={setSelectedServerUrl}
                                 />
@@ -210,7 +214,8 @@ export default function MovieInformation() {
                                     autoPlay
                                     title='Movie'
                                     src={selectedServer.url}
-                                    allow='autoplay'
+                                    sandbox={selectedServer.isSandboxed ? WATCH_PLAYER_SANDBOX : undefined}
+                                    allow='autoplay; fullscreen'
                                     allowFullScreen
                                     scrolling="no"
                                     onLoad={() => setIsMovieLoading(false)}
